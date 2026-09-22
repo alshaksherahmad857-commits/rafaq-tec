@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rafaq Tec — Stronger Together</title>
+  <meta name="description" content="Rafaq Tec is a digital studio for UI/UX design, web development, mobile apps and AI agents.">
+  <meta name="theme-color" content="#0b0a14">
+  <meta property="og:title" content="Rafaq Tec — Stronger Together">
+  <meta property="og:description" content="UI/UX design, web & mobile development, and AI agents.">
+  <meta property="og:image" content="assets/logo-banner.png">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Shared SVG gradients for the logo mark -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="g-top" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#5f2cf0"/>
+        <stop offset=".35" stop-color="#8e2de2"/>
+        <stop offset=".7" stop-color="#e0457b"/>
+        <stop offset="1" stop-color="#ff7a5a"/>
+      </linearGradient>
+      <linearGradient id="g-bot" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#5a2de6"/>
+        <stop offset=".3" stop-color="#7a3ae8"/>
+        <stop offset=".6" stop-color="#ff4438"/>
+        <stop offset="1" stop-color="#ff8a1a"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============ PRELOADER ============ -->
+  <div class="preloader" id="preloader">
+    <svg class="pre-mark" viewBox="440 350 385 425">
+      <path class="pre-top" fill="url(#g-top)" d="M462 362H680A114 114 0 0 1 688 590L478 458Q470 452 468 445L452 378Q450 362 462 362Z"/>
+      <path class="pre-bot" fill="url(#g-bot)" d="M583 535L782 660Q790 665 792 672L812 745Q815 763 800 763H583A114 114 0 0 1 583 535Z"/>
+    </svg>
+    <div class="pre-word"><span>Rafaq</span><span>Tec</span></div>
+    <div class="pre-count"><span id="pre-num">0</span>%</div>
+    <div class="pre-curtain"></div>
+  </div>
+
+  <!-- ============ CURSOR / FX ============ -->
+  <div class="cursor" id="cursor"><span class="cursor-label" id="cursor-label"></span></div>
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a href="#home" class="brand" aria-label="Rafaq Tec home">
+      <svg class="brand-mark" viewBox="440 350 385 425">
+        <path fill="url(#g-top)" d="M462 362H680A114 114 0 0 1 688 590L478 458Q470 452 468 445L452 378Q450 362 462 362Z"/>
+        <path fill="url(#g-bot)" d="M583 535L782 660Q790 665 792 672L812 745Q815 763 800 763H583A114 114 0 0 1 583 535Z"/>
+      </svg>
+      <span class="brand-text"><b>Rafaq</b> Tec</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#services" data-i18n="nav.services">Services</a>
+      <a href="#ai" data-i18n="nav.ai">AI Agents</a>
+      <a href="#process" data-i18n="nav.process">Process</a>
+      <a href="#work" data-i18n="nav.work">Work</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="lang-toggle" id="lang-toggle" aria-label="Switch language"><span class="lang-en">EN</span><span class="lang-ar">ع</span></button>
+      <a href="#contact" class="btn btn-sm btn-primary magnetic" data-i18n="nav.cta">Start a project</a>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#services" data-i18n="nav.services">Services</a>
+    <a href="#ai" data-i18n="nav.ai">AI Agents</a>
+    <a href="#process" data-i18n="nav.process">Process</a>
+    <a href="#work" data-i18n="nav.work">Work</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="home">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <div class="hero-badge intro-fade"><span class="pulse"></span><span data-i18n="hero.badge">Now booking projects for 2026</span></div>
+          <h1 class="hero-title">
+            <span class="line"><span data-i18n="hero.l1">We design &amp; build</span></span>
+            <span class="line"><span class="grad-text" data-i18n="hero.l2">digital products</span></span>
+            <span class="line"><span data-i18n="hero.l3">that feel alive.</span></span>
+          </h1>
+          <p class="hero-sub intro-fade" data-i18n="hero.sub">Rafaq Tec is a product studio for UI/UX design, web &amp; mobile development and intelligent AI agents. We partner with ambitious teams, because we're stronger together.</p>
+          <div class="hero-actions intro-fade">
+            <a href="#contact" class="btn btn-primary magnetic"><span data-i18n="hero.cta1">Start your project</span><svg class="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="#work" class="btn btn-ghost magnetic" data-i18n="hero.cta2">See our work</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" id="hero-visual">
+          <div class="orbit orbit-1"><span></span></div>
+          <div class="orbit orbit-2"><span></span></div>
+          <div class="orbit orbit-3"><span></span></div>
+          <svg class="hero-mark" id="hero-mark" viewBox="440 350 385 425">
+            <g class="hm-top"><path fill="url(#g-top)" d="M462 362H680A114 114 0 0 1 688 590L478 458Q470 452 468 445L452 378Q450 362 462 362Z"/></g>
+            <g class="hm-bot"><path fill="url(#g-bot)" d="M583 535L782 660Q790 665 792 672L812 745Q815 763 800 763H583A114 114 0 0 1 583 535Z"/></g>
+          </svg>
+          <div class="float-chip chip-1"><i class="dot d-purple"></i>UI/UX</div>
+          <div class="float-chip chip-2"><i class="dot d-pink"></i>Web</div>
+          <div class="float-chip chip-3"><i class="dot d-orange"></i>Mobile</div>
+          <div class="float-chip chip-4"><i class="dot d-violet"></i>AI Agents</div>
+        </div>
+      </div>
+
+      <a href="#services" class="scroll-cue intro-fade" aria-label="Scroll down"><span data-i18n="hero.scroll">Scroll</span><i></i></a>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <section class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <div class="marquee-group">
+          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Agents</span><b>✦</b><span>Stronger Together</span><b>✦</b>
+        </div>
+        <div class="marquee-group">
+          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Agents</span><b>✦</b><span>Stronger Together</span><b>✦</b>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="section services" id="services">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal" data-i18n="svc.eyebrow">What we do</span>
+          <h2 class="section-title reveal" data-i18n="svc.title">Four crafts. <span class="grad-text">One team.</span></h2>
+          <p class="section-sub reveal" data-i18n="svc.sub">From the first sketch to a product in millions of hands, every discipline under one roof, working as one.</p>
+        </div>
+
+        <div class="services-grid">
+          <article class="svc-card reveal" data-tilt>
+            <div class="svc-glow"></div>
+            <div class="svc-top"><span class="svc-num">01</span>
+              <svg class="svc-icon" viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="26" rx="4"/><path d="M6 16h36M16 40h16M24 34v6"/><circle cx="18" cy="25" r="3"/><path d="M26 22h10M26 27h6"/></svg>
+            </div>
+            <h3 data-i18n="svc.1.t">UI/UX Design</h3>
+            <p data-i18n="svc.1.d">Research-driven interfaces, design systems and prototypes that turn complex flows into effortless experiences.</p>
+            <ul class="tags"><li>Research</li><li>Wireframes</li><li>Design Systems</li><li>Prototyping</li></ul>
+            <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+          </article>
+
+          <article class="svc-card reveal" data-tilt>
+            <div class="svc-glow"></div>
+            <div class="svc-top"><span class="svc-num">02</span>
+              <svg class="svc-icon" viewBox="0 0 48 48"><path d="M17 14L7 24l10 10M31 14l10 10-10 10M27 10l-6 28"/></svg>
+            </div>
+            <h3 data-i18n="svc.2.t">Web Development</h3>
+            <p data-i18n="svc.2.d">Fast, secure and scalable websites and web apps, built with modern frameworks and obsessive attention to performance.</p>
+            <ul class="tags"><li>React / Next.js</li><li>Node</li><li>E-commerce</li><li>SaaS</li></ul>
+            <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+          </article>
+
+          <article class="svc-card reveal" data-tilt>
+            <div class="svc-glow"></div>
+            <div class="svc-top"><span class="svc-num">03</span>
+              <svg class="svc-icon" viewBox="0 0 48 48"><rect x="13" y="5" width="22" height="38" rx="5"/><path d="M21 10h6M22 37h4"/></svg>
+            </div>
+            <h3 data-i18n="svc.3.t">Mobile Development</h3>
+            <p data-i18n="svc.3.d">Native-feeling iOS and Android apps with smooth motion, offline support and the polish users notice.</p>
+            <ul class="tags"><li>Flutter</li><li>React Native</li><li>iOS</li><li>Android</li></ul>
+            <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+          </article>
+
+          <article class="svc-card reveal" data-tilt>
+            <div class="svc-glow"></div>
+            <div class="svc-top"><span class="svc-num">04</span>
+              <svg class="svc-icon" viewBox="0 0 48 48"><rect x="10" y="14" width="28" height="22" rx="6"/><circle cx="19" cy="25" r="2.5"/><circle cx="29" cy="25" r="2.5"/><path d="M24 14V8M20 8h8M5 22v6M43 22v6M19 31h10"/></svg>
+            </div>
+            <h3 data-i18n="svc.4.t">AI Agents</h3>
+            <p data-i18n="svc.4.d">Custom AI agents and agentic interfaces that automate work, talk to your tools and make your product think.</p>
+            <ul class="tags"><li>LLM Agents</li><li>Automation</li><li>Chat UI</li><li>Integrations</li></ul>
+            <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AI AGENT ============ -->
+    <section class="section ai" id="ai">
+      <div class="container ai-grid">
+        <div class="ai-copy">
+          <span class="eyebrow reveal" data-i18n="ai.eyebrow">AI Agents &amp; Agentic UI</span>
+          <h2 class="section-title reveal" data-i18n="ai.title">Software that <span class="grad-text">thinks</span> and acts for you.</h2>
+          <p class="section-sub reveal" data-i18n="ai.sub">We design and engineer AI agents that plug into your data and tools, plus interfaces that make working with them feel natural.</p>
+          <ul class="ai-list">
+            <li class="reveal"><span class="ai-ic">⚡</span><div><b data-i18n="ai.f1.t">Workflow automation</b><p data-i18n="ai.f1.d">Agents that handle repetitive tasks across your CRM, email and databases.</p></div></li>
+            <li class="reveal"><span class="ai-ic">💬</span><div><b data-i18n="ai.f2.t">Conversational interfaces</b><p data-i18n="ai.f2.d">Chat and voice experiences designed with the same care as any great UI.</p></div></li>
+            <li class="reveal"><span class="ai-ic">🔗</span><div><b data-i18n="ai.f3.t">Deep integrations</b><p data-i18n="ai.f3.d">Secure connections to your APIs, documents and internal systems.</p></div></li>
+          </ul>
+        </div>
+
+        <div class="terminal reveal" id="terminal">
+          <div class="term-bar">
+            <i></i><i></i><i></i>
+            <span class="term-title">rafaq-agent — live</span>
+            <span class="term-status"><span class="pulse"></span>online</span>
+          </div>
+          <div class="term-body" id="term-body"></div>
+          <div class="term-input"><span class="term-caret">›</span><span id="term-typing"></span><span class="blink">▍</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS (horizontal) ============ -->
+    <section class="process" id="process">
+      <div class="process-pin">
+        <div class="container process-head">
+          <span class="eyebrow" data-i18n="proc.eyebrow">How we work</span>
+          <h2 class="section-title" data-i18n="proc.title">From idea to <span class="grad-text">impact</span>.</h2>
+          <div class="process-bar"><span id="process-fill"></span></div>
+        </div>
+        <div class="process-track" id="process-track">
+          <div class="step">
+            <span class="step-num">01</span>
+            <h3 data-i18n="proc.1.t">Discover</h3>
+            <p data-i18n="proc.1.d">Workshops, user research and goals. We learn your business before we touch a pixel.</p>
+            <div class="step-art art-1"><i></i><i></i><i></i></div>
+          </div>
+          <div class="step">
+            <span class="step-num">02</span>
+            <h3 data-i18n="proc.2.t">Design</h3>
+            <p data-i18n="proc.2.d">Flows, wireframes and high-fidelity UI, validated with real users through prototypes.</p>
+            <div class="step-art art-2"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="step">
+            <span class="step-num">03</span>
+            <h3 data-i18n="proc.3.t">Build</h3>
+            <p data-i18n="proc.3.d">Clean, tested code in weekly sprints. You see progress every single week.</p>
+            <div class="step-art art-3"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="step">
+            <span class="step-num">04</span>
+            <h3 data-i18n="proc.4.t">Launch</h3>
+            <p data-i18n="proc.4.d">QA, performance tuning, store submission and a smooth go-live.</p>
+            <div class="step-art art-4"><i></i></div>
+          </div>
+          <div class="step">
+            <span class="step-num">05</span>
+            <h3 data-i18n="proc.5.t">Grow</h3>
+            <p data-i18n="proc.5.d">Analytics, iteration and new features. We stay with you after launch.</p>
+            <div class="step-art art-5"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section class="section stats">
+      <div class="container"><div class="stats-grid">
+        <div class="stat reveal"><b><span class="count" data-to="120">0</span>+</b><span data-i18n="stat.1">Projects delivered</span></div>
+        <div class="stat reveal"><b><span class="count" data-to="98">0</span>%</b><span data-i18n="stat.2">Client satisfaction</span></div>
+        <div class="stat reveal"><b><span class="count" data-to="40">0</span>+</b><span data-i18n="stat.3">Apps launched</span></div>
+        <div class="stat reveal"><b><span class="count" data-to="12">0</span></b><span data-i18n="stat.4">Countries served</span></div>
+      </div></div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section class="section work" id="work">
+      <div class="container">
+        <div class="section-head row">
+          <div>
+            <span class="eyebrow reveal" data-i18n="work.eyebrow">Selected work</span>
+            <h2 class="section-title reveal" data-i18n="work.title">Products we're <span class="grad-text">proud of</span>.</h2>
+          </div>
+          <a href="#contact" class="btn btn-ghost magnetic reveal" data-i18n="work.cta">Have a project?</a>
+        </div>
+
+        <div class="work-grid">
+          <a class="work-card reveal" data-cursor="View">
+            <div class="work-visual v1">
+              <div class="mock-phone"><i class="mp-notch"></i><i class="mp-ring"></i><i class="mp-bar"></i><i class="mp-bar s"></i><i class="mp-row"></i><i class="mp-row"></i></div>
+            </div>
+            <div class="work-meta"><div><h3>Nabd</h3><p data-i18n="work.1">Health tracking app</p></div><span class="work-tags">Mobile · UI/UX</span></div>
+          </a>
+          <a class="work-card reveal" data-cursor="View">
+            <div class="work-visual v2">
+              <div class="mock-browser"><i class="mb-bar"></i><i class="mb-hero"></i><i class="mb-grid"><b></b><b></b><b></b></i></div>
+            </div>
+            <div class="work-meta"><div><h3>Souq Pro</h3><p data-i18n="work.2">E-commerce platform</p></div><span class="work-tags">Web · Development</span></div>
+          </a>
+          <a class="work-card reveal" data-cursor="View">
+            <div class="work-visual v3">
+              <div class="mock-chat"><i class="mc-in"></i><i class="mc-out"></i><i class="mc-in s"></i><i class="mc-out l"></i></div>
+            </div>
+            <div class="work-meta"><div><h3>Atlas AI</h3><p data-i18n="work.3">Customer support agent</p></div><span class="work-tags">AI Agent</span></div>
+          </a>
+          <a class="work-card reveal" data-cursor="View">
+            <div class="work-visual v4">
+              <div class="mock-dash"><i class="md-side"></i><i class="md-chart"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i><i class="md-card"></i><i class="md-card"></i></div>
+            </div>
+            <div class="work-meta"><div><h3>Mizan</h3><p data-i18n="work.4">Fintech dashboard</p></div><span class="work-tags">UI/UX · Web</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section class="stack" aria-label="Technologies">
+      <p class="stack-label reveal" data-i18n="stack.label">Tools &amp; technologies we master</p>
+      <div class="stack-row"><div class="stack-track">
+        <span>Figma</span><span>React</span><span>Next.js</span><span>Flutter</span><span>Swift</span><span>Kotlin</span><span>Node.js</span><span>TypeScript</span><span>Tailwind</span><span>Framer</span>
+        <span>Figma</span><span>React</span><span>Next.js</span><span>Flutter</span><span>Swift</span><span>Kotlin</span><span>Node.js</span><span>TypeScript</span><span>Tailwind</span><span>Framer</span>
+      </div></div>
+      <div class="stack-row rev"><div class="stack-track">
+        <span>Python</span><span>LLM Agents</span><span>RAG</span><span>PostgreSQL</span><span>Firebase</span><span>AWS</span><span>Docker</span><span>GSAP</span><span>Three.js</span><span>Supabase</span>
+        <span>Python</span><span>LLM Agents</span><span>RAG</span><span>PostgreSQL</span><span>Firebase</span><span>AWS</span><span>Docker</span><span>GSAP</span><span>Three.js</span><span>Supabase</span>
+      </div></div>
+    </section>
+
+    <!-- ============ TESTIMONIALS ============ -->
+    <section class="section testimonials">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow reveal" data-i18n="tst.eyebrow">Kind words</span>
+          <h2 class="section-title reveal" data-i18n="tst.title">Partners, <span class="grad-text">not vendors</span>.</h2>
+        </div>
+        <div class="tst-grid">
+          <figure class="tst reveal">
+            <blockquote data-i18n="tst.1">“Rafaq Tec redesigned our app from the ground up. Engagement doubled within two months of launch.”</blockquote>
+            <figcaption><span class="avatar a1">S</span><div><b>Sara K.</b><span data-i18n="tst.1r">Founder, health startup</span></div></figcaption>
+          </figure>
+          <figure class="tst reveal">
+            <blockquote data-i18n="tst.2">“Their AI agent now handles most of our support tickets. It felt like adding a whole team overnight.”</blockquote>
+            <figcaption><span class="avatar a2">O</span><div><b>Omar H.</b><span data-i18n="tst.2r">COO, e-commerce brand</span></div></figcaption>
+          </figure>
+          <figure class="tst reveal">
+            <blockquote data-i18n="tst.3">“Fast, thoughtful and honest. They challenged our ideas and the product is better for it.”</blockquote>
+            <figcaption><span class="avatar a3">L</span><div><b>Lina M.</b><span data-i18n="tst.3r">Product lead, fintech</span></div></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section contact" id="contact">
+      <div class="contact-glow" aria-hidden="true"></div>
+      <div class="container contact-grid">
+        <div class="contact-copy">
+          <span class="eyebrow reveal" data-i18n="ct.eyebrow">Let's talk</span>
+          <h2 class="contact-title reveal" data-i18n="ct.title">Let's build something <span class="grad-text">stronger together</span>.</h2>
+          <p class="section-sub reveal" data-i18n="ct.sub">Tell us about your idea. We reply within 24 hours with next steps.</p>
+          <div class="contact-info reveal">
+            <a href="mailto:hello@rafaqtec.com">hello@rafaqtec.com</a>
+            <span>+000 000 000 000</span>
+          </div>
+        </div>
+
+        <form class="contact-form reveal" id="contact-form" novalidate>
+          <div class="field"><input id="f-name" name="name" required placeholder=" "><label for="f-name" data-i18n="ct.name">Your name</label></div>
+          <div class="field"><input id="f-email" name="email" type="email" required placeholder=" "><label for="f-email" data-i18n="ct.email">Email address</label></div>
+          <div class="chips" role="group" aria-label="Service">
+            <span class="chips-label" data-i18n="ct.need">I need</span>
+            <label><input type="checkbox" name="svc" value="uiux"><span data-i18n="svc.1.t">UI/UX Design</span></label>
+            <label><input type="checkbox" name="svc" value="web"><span data-i18n="svc.2.t">Web Development</span></label>
+            <label><input type="checkbox" name="svc" value="mobile"><span data-i18n="svc.3.t">Mobile Development</span></label>
+            <label><input type="checkbox" name="svc" value="ai"><span data-i18n="svc.4.t">AI Agents</span></label>
+          </div>
+          <div class="field"><textarea id="f-msg" name="message" rows="4" required placeholder=" "></textarea><label for="f-msg" data-i18n="ct.msg">Tell us about your project</label></div>
+          <button type="submit" class="btn btn-primary btn-block magnetic"><span data-i18n="ct.send">Send message</span><svg class="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <p class="form-note" id="form-note" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-top">
+      <a href="#home" class="brand">
+        <svg class="brand-mark" viewBox="440 350 385 425">
+          <path fill="url(#g-top)" d="M462 362H680A114 114 0 0 1 688 590L478 458Q470 452 468 445L452 378Q450 362 462 362Z"/>
+          <path fill="url(#g-bot)" d="M583 535L782 660Q790 665 792 672L812 745Q815 763 800 763H583A114 114 0 0 1 583 535Z"/>
+        </svg>
+        <span class="brand-text"><b>Rafaq</b> Tec</span>
+      </a>
+      <nav class="footer-links">
+        <a href="#services" data-i18n="nav.services">Services</a>
+        <a href="#ai" data-i18n="nav.ai">AI Agents</a>
+        <a href="#work" data-i18n="nav.work">Work</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+      </nav>
+      <div class="socials">
+        <a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="LinkedIn">IN</a><a href="#" aria-label="Behance">BE</a><a href="#" aria-label="X">X</a>
+      </div>
+    </div>
+    <div class="footer-giant" aria-hidden="true"><span>RAFAQ</span></div>
+    <div class="container footer-bottom">
+      <span>© <span id="year"></span> Rafaq Tec. <span data-i18n="ft.rights">All rights reserved.</span></span>
+      <span class="tagline">STRONGER TOGETHER</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
