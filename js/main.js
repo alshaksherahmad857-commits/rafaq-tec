@@ -190,8 +190,8 @@
     const canvas = $("#hero-canvas");
     const ctx = canvas.getContext("2d");
     const hero = $(".hero");
-    const palette = [[106, 44, 245], [142, 45, 226], [224, 69, 123], [255, 68, 56], [255, 138, 26]];
-    let w = 0, h = 0, pts = [], running = true;
+    const palette = [[45, 212, 191], [34, 211, 238], [56, 189, 248], [59, 130, 246], [29, 78, 216]];
+    let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
     const mouse = { x: -9999, y: -9999 };
 
     // Pre-built colour strings (no string building inside the frame loop)
@@ -503,9 +503,8 @@
   }
 
   function scrollMotion() {
-    // Logo mark: the two halves breathe apart and come back together
-    gsap.to(".hm-top", { x: -10, y: -8, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true });
-    gsap.to(".hm-bot", { x: 10, y: 8, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true });
+    // Logo mark: a gentle breathing scale
+    gsap.to("#hero-mark", { scale: 1.035, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true });
 
     // 3D tilt of the logo following the mouse
     const mark = $("#hero-mark");
@@ -586,14 +585,13 @@
     if (lenis) lenis.stop();
     const num = $("#pre-num");
     const counter = { v: 0 };
-    gsap.set(".pre-top", { x: -140, y: -80, rotate: -25, opacity: 0, transformOrigin: "50% 50%" });
-    gsap.set(".pre-bot", { x: 140, y: 80, rotate: 25, opacity: 0, transformOrigin: "50% 50%" });
+    gsap.set(".pre-mark", { scale: 0.6, y: -30, opacity: 0, transformOrigin: "50% 50%" });
     gsap.set(".pre-word span", { yPercent: 110 });
 
     const tl = gsap.timeline();
     tl.timeScale(lite ? 2.2 : 1.5); // keep the intro short so nobody waits
     tl
-      .to(".pre-top, .pre-bot", { x: 0, y: 0, rotate: 0, opacity: 1, duration: 1.3, ease: "expo.out", stagger: 0.12 })
+      .to(".pre-mark", { scale: 1, y: 0, opacity: 1, duration: 1.3, ease: "expo.out" })
       .to(counter, { v: 100, duration: 1.7, ease: "power2.inOut", onUpdate: () => (num.textContent = Math.round(counter.v)) }, 0)
       .to(".pre-word span", { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.55)
       .to(".pre-mark", { scale: 1.2, duration: 0.25, ease: "power2.in" }, 1.55)
