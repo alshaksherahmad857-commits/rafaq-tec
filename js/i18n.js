@@ -4,20 +4,23 @@ window.RAFAQ_I18N = {
     "nav.services": "خدماتنا",
     "nav.ai": "وكلاء الذكاء الاصطناعي",
     "nav.process": "طريقة عملنا",
+    "nav.work": "أعمالنا",
     "nav.contact": "تواصل معنا",
     "nav.cta": "ابدأ مشروعك",
+
+    "a11y.skip": "تخطَّ إلى المحتوى",
 
     "hero.l1": "نصمّم ونبني",
     "hero.l2": "منتجات رقمية",
     "hero.l3": "تنبض بالحياة.",
-    "hero.sub": "رفاق تك استوديو متخصص في تصميم تجربة وواجهة المستخدم، وتطوير المواقع وتطبيقات الجوال، ووكلاء الذكاء الاصطناعي. نعمل جنبًا إلى جنب مع الفرق الطموحة، لأننا أقوى معًا.",
+    "hero.sub": "رفاق تك تصمّم وتبني المنتجات الرقمية من الفكرة إلى الإطلاق: واجهات، مواقع وتطبيقات جوال، ووكلاء الذكاء الاصطناعي التي تعمل خلفها. فريق واحد بلا تسليم بين أقسام، من أول رسمة إلى ما يستخدمه الناس فعلًا.",
     "hero.cta1": "ابدأ مشروعك",
     "hero.cta2": "خدماتنا",
     "hero.scroll": "مرّر",
 
     "svc.eyebrow": "ماذا نقدّم",
     "svc.title": "أربع حِرف. <span class=\"grad-text\">فريق واحد.</span>",
-    "svc.sub": "من أول رسمة إلى يوم الإطلاق، كل التخصصات تحت سقف واحد وتعمل كفريق واحد.",
+    "svc.sub": "من أول رسمة إلى منتج بين أيدي الملايين، كل التخصصات تحت سقف واحد وتعمل كفريق واحد.",
     "svc.1.t": "تصميم UI/UX",
     "svc.1.d": "واجهات مبنية على البحث، وأنظمة تصميم ونماذج تفاعلية تحوّل التجارب المعقدة إلى تجارب سلسة.",
     "svc.2.t": "تطوير المواقع",
@@ -50,6 +53,30 @@ window.RAFAQ_I18N = {
     "proc.5.t": "النمو",
     "proc.5.d": "تحليلات وتحسينات وميزات جديدة. نبقى معك بعد الإطلاق.",
 
+    "stat.1": "مشروع منجز",
+    "stat.2": "رضا العملاء",
+    "stat.3": "تطبيق تم إطلاقه",
+    "stat.4": "دولة خدمناها",
+
+    "work.eyebrow": "مختارات من أعمالنا",
+    "work.title": "منتجات <span class=\"grad-text\">نفخر بها</span>.",
+    "work.cta": "عندك مشروع؟",
+    "work.1": "تطبيق لمتابعة الصحة",
+    "work.2": "منصة تجارة إلكترونية",
+    "work.3": "وكيل ذكي لخدمة العملاء",
+    "work.4": "لوحة تحكم مالية",
+
+    "stack.label": "الأدوات والتقنيات التي نتقنها",
+
+    "tst.eyebrow": "قالوا عنا",
+    "tst.title": "شركاء، <span class=\"grad-text\">لا مجرد مزوّدين</span>.",
+    "tst.1": "«أعاد فريق رفاق تك تصميم تطبيقنا من الصفر، وتضاعف التفاعل خلال شهرين من الإطلاق.»",
+    "tst.1r": "مؤسِّسة، شركة ناشئة في الصحة",
+    "tst.2": "«الوكيل الذكي الذي بنوه يتولى معظم تذاكر الدعم لدينا. كأننا أضفنا فريقًا كاملًا بين ليلة وضحاها.»",
+    "tst.2r": "مدير العمليات، علامة تجارة إلكترونية",
+    "tst.3": "«سريعون ومدروسون وصادقون. ناقشوا أفكارنا وأصبح المنتج أفضل بفضل ذلك.»",
+    "tst.3r": "قائدة منتج، شركة تقنية مالية",
+
     "ct.eyebrow": "لنتحدث",
     "ct.title": "لنبنِ شيئًا <span class=\"grad-text\">أقوى معًا</span>.",
     "ct.sub": "أخبرنا عن فكرتك وسنتواصل معك بالخطوات التالية.",
@@ -68,7 +95,19 @@ window.RAFAQ_I18N = {
   en: {
     "ct.ok": "Thank you! Your message is in. We'll be in touch shortly.",
     "ct.err": "Please fill in your name, a valid email and a message.",
-    "cursor.view": "View"
+    "cursor.view": "View",
+    "svc.1.t": "UI/UX Design",
+    "svc.2.t": "Web Development",
+    "svc.3.t": "Mobile Development",
+    "svc.4.t": "AI Agents",
+    "quiz.result.discoveryTitle": "Start with a Discovery Workshop",
+    "quiz.result.discoveryDesc": "We'll help you validate the idea and map the right path, whether it's design, web, mobile or AI.",
+    "quiz.result.desc.uiux": "Great starting point. We'll design research-backed interfaces and a design system your team can build on.",
+    "quiz.result.desc.web": "We'll build a fast, scalable website or web app tailored to your goals.",
+    "quiz.result.desc.mobile": "We'll craft a native-feeling iOS/Android app with the polish users notice.",
+    "quiz.result.desc.ai": "We'll design and build an AI agent that plugs into your tools and automates real work.",
+    "quiz.summary": "Quiz result — interested in: {service}. Timeline: {timeline}. Budget: {budget}.",
+    "work.interest": "Hi, I'm interested in a project like {name}. "
   },
 
   /* Scripted AI-agent demo shown in the terminal */

@@ -60,6 +60,7 @@
     }
     if (window.ScrollTrigger) requestAnimationFrame(() => ScrollTrigger.refresh());
     agent.restart();
+    quiz.refresh();
   }
 
   $("#lang-toggle").addEventListener("click", () => applyLang(lang === "en" ? "ar" : "en", true));
@@ -78,15 +79,19 @@
     }
   }
 
+  function goTo(target, id) {
+    closeMenu();
+    if (lenis) lenis.scrollTo(target, { offset: id === "#home" ? 0 : -60, duration: 1.4 });
+    else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+  }
+
   $$('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
+      e.preventDefault();
       const target = id.length > 1 ? $(id) : null;
       if (!target) return;
-      e.preventDefault();
-      root.classList.remove("menu-open");
-      if (lenis) lenis.scrollTo(target, { offset: id === "#home" ? 0 : -60, duration: 1.4 });
-      else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+      goTo(target, id);
     });
   });
 
@@ -109,7 +114,19 @@
     if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
   }, { passive: true });
 
-  $("#burger").addEventListener("click", () => root.classList.toggle("menu-open"));
+  const burger = $("#burger");
+  const mobileMenu = $("#mobile-menu");
+  function setMenu(open) {
+    root.classList.toggle("menu-open", open);
+    burger.setAttribute("aria-expanded", String(open));
+    mobileMenu.setAttribute("aria-hidden", String(!open));
+    mobileMenu.inert = !open;
+  }
+  function closeMenu() { setMenu(false); }
+  burger.addEventListener("click", () => setMenu(!root.classList.contains("menu-open")));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && root.classList.contains("menu-open")) closeMenu();
+  });
 
   /* ---------------- Custom cursor ---------------- */
   if (root.classList.contains("has-cursor")) {
@@ -147,7 +164,7 @@
         const y = e.clientY - r.top - r.height / 2;
         gsap.to(el, { x: x * 0.3, y: y * 0.4, duration: 0.5, ease: "power3.out" });
       });
-      el.addEventListener("mouseleave", () => gsap.to(el, { x: 0, y: 0, duration: 0.9, ease: "elastic.out(1, .4)" }));
+      el.addEventListener("mouseleave", () => gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: "power4.out" }));
     });
   }
 
@@ -174,7 +191,7 @@
     const ctx = canvas.getContext("2d");
     const hero = $(".hero");
     const palette = [[106, 44, 245], [142, 45, 226], [224, 69, 123], [255, 68, 56], [255, 138, 26]];
-    let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
+    let w = 0, h = 0, pts = [], running = true;
     const mouse = { x: -9999, y: -9999 };
 
     // Pre-built colour strings (no string building inside the frame loop)
@@ -361,6 +378,95 @@
     return { restart: () => { if (started) play(); } };
   })();
 
+  /* ---------------- Work cards -> contact ---------------- */
+  $$(".work-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const name = card.querySelector("h3")?.textContent?.trim() || "";
+      const msg = $("#f-msg");
+      if (msg && !msg.value.trim()) msg.value = t("work.interest").replace("{name}", name);
+      goTo($("#contact"), "#contact");
+    });
+  });
+
+  /* ---------------- Service-fit quiz ---------------- */
+  const quiz = (() => {
+    const card = $("#quiz-card");
+    if (!card) return { refresh() {} };
+    const steps = $$(".quiz-step", card);
+    const resultEl = $(".quiz-result", card);
+    const fill = $("#quiz-progress-fill");
+    const answers = {};
+    let stepIndex = 0;
+
+    const ICON_UIUX = '<rect x="6" y="8" width="36" height="26" rx="4"/><path d="M6 16h36M16 40h16M24 34v6"/><circle cx="18" cy="25" r="3"/><path d="M26 22h10M26 27h6"/>';
+    const ICON_WEB = '<path d="M17 14L7 24l10 10M31 14l10 10-10 10M27 10l-6 28"/>';
+    const ICON_MOBILE = '<rect x="13" y="5" width="22" height="38" rx="5"/><path d="M21 10h6M22 37h4"/>';
+    const ICON_AI = '<rect x="10" y="14" width="28" height="22" rx="6"/><circle cx="19" cy="25" r="2.5"/><circle cx="29" cy="25" r="2.5"/><path d="M24 14V8M20 8h8M5 22v6M43 22v6M19 31h10"/>';
+    const ICON_COMPASS = '<circle cx="24" cy="24" r="18"/><path d="M31 17 21 21l-4 10 10-4 4-10Z"/>';
+
+    const SERVICE = {
+      uiux: { key: "svc.1.t", desc: "quiz.result.desc.uiux", icon: ICON_UIUX, chip: "uiux" },
+      web: { key: "svc.2.t", desc: "quiz.result.desc.web", icon: ICON_WEB, chip: "web" },
+      mobile: { key: "svc.3.t", desc: "quiz.result.desc.mobile", icon: ICON_MOBILE, chip: "mobile" },
+      ai: { key: "svc.4.t", desc: "quiz.result.desc.ai", icon: ICON_AI, chip: "ai" },
+      unsure: { key: "quiz.result.discoveryTitle", desc: "quiz.result.discoveryDesc", icon: ICON_COMPASS, chip: "uiux" },
+    };
+
+    function showStep(i) {
+      steps.forEach((s, idx) => (s.hidden = idx !== i));
+      resultEl.hidden = i < steps.length;
+      fill.style.transform = `scaleX(${Math.min(i, steps.length) / steps.length})`;
+    }
+
+    function renderResult() {
+      const conf = SERVICE[answers.service ? answers.service.value : "unsure"];
+      $("#quiz-result-icon").innerHTML = `<svg viewBox="0 0 48 48">${conf.icon}</svg>`;
+      $("#quiz-result-service").textContent = t(conf.key);
+      $("#quiz-result-desc").textContent = t(conf.desc);
+    }
+
+    $$(".quiz-opt", card).forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const group = btn.closest(".quiz-options");
+        $$(".quiz-opt", group).forEach((b) => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        answers[group.dataset.q] = { value: btn.dataset.value, label: btn.textContent.trim() };
+        setTimeout(() => {
+          if (stepIndex < steps.length - 1) { stepIndex++; showStep(stepIndex); }
+          else { renderResult(); stepIndex = steps.length; showStep(stepIndex); }
+        }, 260);
+      });
+    });
+
+    $$(".quiz-back", card).forEach((btn) => {
+      btn.addEventListener("click", () => { if (stepIndex > 0) { stepIndex--; showStep(stepIndex); } });
+    });
+
+    $("#quiz-restart").addEventListener("click", () => {
+      answers.service = answers.timeline = answers.budget = null;
+      $$(".quiz-opt", card).forEach((b) => b.classList.remove("is-active"));
+      stepIndex = 0;
+      showStep(0);
+    });
+
+    $("#quiz-cta").addEventListener("click", () => {
+      const conf = SERVICE[answers.service ? answers.service.value : "unsure"];
+      const chip = $(`.chips input[value="${conf.chip}"]`);
+      if (chip) chip.checked = true;
+      const msg = $("#f-msg");
+      if (msg && !msg.value.trim()) {
+        msg.value = t("quiz.summary")
+          .replace("{service}", t(conf.key))
+          .replace("{timeline}", answers.timeline ? answers.timeline.label : "—")
+          .replace("{budget}", answers.budget ? answers.budget.label : "—");
+      }
+      goTo($("#contact"), "#contact");
+    });
+
+    showStep(0);
+    return { refresh: () => { if (!resultEl.hidden) renderResult(); } };
+  })();
+
   /* ---------------- Contact form ---------------- */
   const form = $("#contact-form");
   const note = $("#form-note");
@@ -491,7 +597,7 @@
       .to(counter, { v: 100, duration: 1.7, ease: "power2.inOut", onUpdate: () => (num.textContent = Math.round(counter.v)) }, 0)
       .to(".pre-word span", { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.55)
       .to(".pre-mark", { scale: 1.2, duration: 0.25, ease: "power2.in" }, 1.55)
-      .to(".pre-mark", { scale: 1, duration: 0.6, ease: "elastic.out(1, .45)" })
+      .to(".pre-mark", { scale: 1, duration: 0.5, ease: "power3.out" })
       .to(".pre-curtain", { scaleY: 1, duration: 0.8, ease: "expo.inOut" }, "-=.35")
       .add(() => {
         gsap.set([".pre-mark", ".pre-word", ".pre-count"], { opacity: 0 });
