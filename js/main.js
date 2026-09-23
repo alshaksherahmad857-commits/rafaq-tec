@@ -11,8 +11,28 @@
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const I18N = window.RAFAQ_I18N || { ar: {}, en: {}, agent: { en: [], ar: [] } };
 
+  // Lite mode: phones, weak CPUs, low memory or data-saver get lighter effects
+  const conn = navigator.connection || {};
+  let lite =
+    !finePointer ||
+    (navigator.hardwareConcurrency || 8) <= 4 ||
+    (navigator.deviceMemory || 8) <= 4 ||
+    !!conn.saveData ||
+    /(^|-)2g/.test(conn.effectiveType || "");
+  if (lite) root.classList.add("lite");
+
+  // Failsafe: never leave the page hidden if a script or CDN fails
+  const revealAll = () => {
+    root.classList.remove("js");
+    const pre = $("#preloader");
+    if (pre) pre.remove();
+    body.classList.remove("loading");
+  };
+  window.addEventListener("error", (e) => { if (!e.filename || /main\.js|gsap|ScrollTrigger|lenis/i.test(e.filename)) revealAll(); });
+  setTimeout(() => { if ($("#preloader")) revealAll(); }, 6000);
+
   if (hasGSAP && !reduce) root.classList.add("js");
-  if (finePointer && !reduce) root.classList.add("has-cursor");
+  if (finePointer && !reduce && !lite) root.classList.add("has-cursor");
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
   $("#year").textContent = new Date().getFullYear();
@@ -46,14 +66,14 @@
 
   /* ---------------- Smooth scroll ---------------- */
   let lenis = null;
-  if (window.Lenis && !reduce) {
+  if (window.Lenis && !reduce && !lite) {
     lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
     if (hasGSAP) {
       lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.add((time) => lenis && lenis.raf(time * 1000));
       gsap.ticker.lagSmoothing(0);
     } else {
-      const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+      const raf = (time) => { if (lenis) { lenis.raf(time); requestAnimationFrame(raf); } };
       requestAnimationFrame(raf);
     }
   }
@@ -119,7 +139,7 @@
   }
 
   /* ---------------- Magnetic buttons ---------------- */
-  if (hasGSAP && finePointer && !reduce) {
+  if (hasGSAP && finePointer && !reduce && !lite) {
     $$(".magnetic").forEach((el) => {
       el.addEventListener("mousemove", (e) => {
         const r = el.getBoundingClientRect();
@@ -139,12 +159,12 @@
       const py = (e.clientY - r.top) / r.height;
       card.style.setProperty("--x", `${px * 100}%`);
       card.style.setProperty("--y", `${py * 100}%`);
-      if (hasGSAP && !reduce) {
+      if (hasGSAP && !reduce && !lite) {
         gsap.to(card, { rotateY: (px - 0.5) * 10, rotateX: (0.5 - py) * 10, transformPerspective: 900, duration: 0.6, ease: "power3.out" });
       }
     });
     card.addEventListener("mouseleave", () => {
-      if (hasGSAP && !reduce) gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.9, ease: "power3.out" });
+      if (hasGSAP && !reduce && !lite) gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.9, ease: "power3.out" });
     });
   });
 
@@ -154,29 +174,59 @@
     const ctx = canvas.getContext("2d");
     const hero = $(".hero");
     const palette = [[106, 44, 245], [142, 45, 226], [224, 69, 123], [255, 68, 56], [255, 138, 26]];
-    let w = 0, h = 0, pts = [], running = true;
+    let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
     const mouse = { x: -9999, y: -9999 };
 
-    function colorAt(x) {
-      const tt = Math.max(0, Math.min(1, x / w)) * (palette.length - 1);
+    // Pre-built colour strings (no string building inside the frame loop)
+    const BUCKETS = 24;
+    const colors = Array.from({ length: BUCKETS }, (_, n) => {
+      const tt = (n / (BUCKETS - 1)) * (palette.length - 1);
       const i = Math.floor(tt), f = tt - i;
       const a = palette[i], b = palette[Math.min(i + 1, palette.length - 1)];
-      return a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(",");
-    }
-    function resize() {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.min(120, Math.floor((w * h) / 13000));
+      return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(",")})`;
+    });
+    const colorAt = (x) => colors[Math.max(0, Math.min(BUCKETS - 1, ((x / w) * (BUCKETS - 1)) | 0))];
+
+    function spawn() {
+      const n = lite ? Math.min(36, Math.floor((w * h) / 30000)) : Math.min(90, Math.floor((w * h) / 16000));
       pts = Array.from({ length: n }, () => ({
         x: Math.random() * w, y: Math.random() * h,
         vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
         r: Math.random() * 1.6 + 0.6,
       }));
     }
-    function frame() {
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, lite ? 1 : 1.5);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Mobile browsers fire resize when the address bar hides: only respawn on real width changes
+      if (Math.abs(w - lastW) > 80 || !pts.length) { spawn(); lastW = w; }
+    }
+
+    // Measure real performance once; drop to lite mode if the device struggles
+    let probeFrames = 0, probeStart = 0;
+    function probe(now) {
+      if (lite || probeFrames < 0) return;
+      if (!probeStart) probeStart = now;
+      if (++probeFrames === 60) {
+        const fps = 60000 / (now - probeStart);
+        probeFrames = -1;
+        if (fps < 40) {
+          lite = true;
+          root.classList.add("lite");
+          if (lenis) { lenis.destroy(); lenis = null; }
+          resize(); spawn();
+        }
+      }
+    }
+
+    function frame(now) {
       if (!running) return;
+      requestAnimationFrame(frame);
+      probe(now);
+      if (lite && now - last < 33) return; // ~30fps is plenty on weak devices
+      last = now;
       ctx.clearRect(0, 0, w, h);
       for (const p of pts) {
         const dx = p.x - mouse.x, dy = p.y - mouse.y;
@@ -195,38 +245,46 @@
       ctx.lineWidth = 0.8;
       for (let i = 0; i < pts.length; i++) {
         const a = pts[i];
+        const c = colorAt(a.x);
+        ctx.strokeStyle = c;
         for (let j = i + 1; j < pts.length; j++) {
           const b = pts[j];
           const dx = a.x - b.x, dy = a.y - b.y;
           const d2 = dx * dx + dy * dy;
           if (d2 < 15000) {
-            ctx.strokeStyle = `rgba(${colorAt(a.x)},${(1 - d2 / 15000) * 0.28})`;
+            ctx.globalAlpha = (1 - d2 / 15000) * 0.28;
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
         const mx = a.x - mouse.x, my = a.y - mouse.y;
         const md = mx * mx + my * my;
         if (md < 40000) {
-          ctx.strokeStyle = `rgba(${colorAt(a.x)},${(1 - md / 40000) * 0.5})`;
+          ctx.globalAlpha = (1 - md / 40000) * 0.5;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
         }
-        ctx.fillStyle = `rgba(${colorAt(a.x)},.9)`;
-        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = c;
+        ctx.fillRect(a.x - a.r, a.y - a.r, a.r * 2, a.r * 2);
       }
-      requestAnimationFrame(frame);
+      ctx.globalAlpha = 1;
     }
     hero.addEventListener("mousemove", (e) => {
       const r = canvas.getBoundingClientRect();
       mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
     });
     hero.addEventListener("mouseleave", () => { mouse.x = mouse.y = -9999; });
-    addEventListener("resize", resize);
+    let resizeTimer;
+    addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
     resize();
-    new IntersectionObserver(([entry]) => {
+    // Only animate while the hero is on screen and the tab is visible
+    let inView = true;
+    const sync = () => {
       const was = running;
-      running = entry.isIntersecting;
+      running = inView && !document.hidden;
       if (running && !was) requestAnimationFrame(frame);
-    }).observe(hero);
+    };
+    new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
+    document.addEventListener("visibilitychange", sync);
     requestAnimationFrame(frame);
   }
   if (!reduce) heroCanvas();
@@ -426,7 +484,9 @@
     gsap.set(".pre-bot", { x: 140, y: 80, rotate: 25, opacity: 0, transformOrigin: "50% 50%" });
     gsap.set(".pre-word span", { yPercent: 110 });
 
-    gsap.timeline()
+    const tl = gsap.timeline();
+    tl.timeScale(lite ? 2.2 : 1.5); // keep the intro short so nobody waits
+    tl
       .to(".pre-top, .pre-bot", { x: 0, y: 0, rotate: 0, opacity: 1, duration: 1.3, ease: "expo.out", stagger: 0.12 })
       .to(counter, { v: 100, duration: 1.7, ease: "power2.inOut", onUpdate: () => (num.textContent = Math.round(counter.v)) }, 0)
       .to(".pre-word span", { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.55)
@@ -462,7 +522,7 @@
     });
   };
   if (document.fonts && document.fonts.ready) {
-    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(start);
+    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 800))]).then(start);
   } else {
     start();
   }

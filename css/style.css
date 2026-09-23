@@ -49,23 +49,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 .grad-text {
   background: var(--grad);
-  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: gradShift 8s ease-in-out infinite alternate;
 }
-@keyframes gradShift { to { background-position: 100% 0; } }
 
 /* ---------- Grain & progress ---------- */
 .grain {
-  position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .05;
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 90; pointer-events: none; opacity: .05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 1.2s steps(6) infinite;
-}
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); }
-  60% { transform: translate(-2%, -1%); } 80% { transform: translate(3%, 3%); }
 }
 .scroll-progress {
   position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 120;
@@ -175,11 +167,11 @@ html[lang="en"] .lang-en, html[lang="ar"] .lang-ar { color: #fff; }
 /* ---------- Hero ---------- */
 .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; overflow: hidden; padding-block: 120px 80px; }
 #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
-.hero-aurora { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: blur(90px); opacity: .55; }
+.hero-aurora { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .6; }
 .hero-aurora i { position: absolute; border-radius: 50%; }
-.hero-aurora i:nth-child(1) { width: 46vw; height: 46vw; left: -12vw; top: -10vw; background: #3a1a9e; animation: blob1 18s ease-in-out infinite alternate; }
-.hero-aurora i:nth-child(2) { width: 38vw; height: 38vw; right: -10vw; bottom: -14vw; background: #7a2210; animation: blob2 22s ease-in-out infinite alternate; }
-.hero-aurora i:nth-child(3) { width: 26vw; height: 26vw; right: 20vw; top: 10vw; background: #8e2de2; opacity: .5; animation: blob1 16s ease-in-out infinite alternate-reverse; }
+.hero-aurora i:nth-child(1) { width: 46vw; height: 46vw; left: -12vw; top: -10vw; background: radial-gradient(closest-side, rgba(58, 26, 158, .9), transparent); animation: blob1 18s ease-in-out infinite alternate; }
+.hero-aurora i:nth-child(2) { width: 38vw; height: 38vw; right: -10vw; bottom: -14vw; background: radial-gradient(closest-side, rgba(122, 34, 16, .9), transparent); animation: blob2 22s ease-in-out infinite alternate; }
+.hero-aurora i:nth-child(3) { width: 26vw; height: 26vw; right: 20vw; top: 10vw; background: radial-gradient(closest-side, rgba(142, 45, 226, .5), transparent); animation: blob1 16s ease-in-out infinite alternate-reverse; }
 @keyframes blob1 { to { transform: translate(10vw, 8vw) scale(1.2); } }
 @keyframes blob2 { to { transform: translate(-8vw, -10vw) scale(1.15); } }
 
@@ -421,7 +413,7 @@ html[lang="ar"] .stack-label { letter-spacing: 0; direction: rtl; }
 
 /* ---------- Contact ---------- */
 .contact { overflow: hidden; }
-.contact-glow { position: absolute; left: 50%; bottom: -40%; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(142, 45, 226, .35), rgba(255, 68, 56, .15) 50%, transparent); filter: blur(40px); pointer-events: none; }
+.contact-glow { position: absolute; left: 50%; bottom: -40%; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(142, 45, 226, .35), rgba(255, 68, 56, .15) 50%, transparent); pointer-events: none; }
 .contact-grid { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(40px, 6vw, 90px); align-items: start; }
 .contact-title { margin: 0; font-size: clamp(32px, 4.3vw, 62px); line-height: 1; letter-spacing: -.045em; font-weight: 800; }
 html[lang="ar"] .contact-title { letter-spacing: 0; line-height: 1.25; }
@@ -507,3 +499,17 @@ html[lang="ar"] .contact-title { letter-spacing: 0; line-height: 1.25; }
 .has-cursor body, .has-cursor a, .has-cursor button, .has-cursor label { cursor: none; }
 .has-cursor input, .has-cursor textarea { cursor: text; }
 .step-art { direction: ltr; }
+
+/* ---------- Lite mode: phones & weaker devices (class set by main.js) ---------- */
+.lite .grain, .lite .hero-aurora i:nth-child(3), .lite .cursor, .lite .cursor-dot { display: none; }
+.lite .hero-aurora i { animation: none; }
+.lite .hero-mark { filter: none; }
+.lite .nav.scrolled { background: rgba(14, 12, 26, .94); }
+.lite .btn-ghost, .lite .nav.scrolled, .lite .mobile-menu, .lite .float-chip, .lite .contact-form, .lite .hero-badge { -webkit-backdrop-filter: none; backdrop-filter: none; }
+.lite .float-chip { background: rgba(20, 16, 38, .95); }
+.lite .contact-form { background: rgba(17, 14, 32, .95); }
+.lite .terminal { box-shadow: 0 20px 50px -20px rgba(106, 44, 245, .5); }
+.lite .marquee-track { animation-duration: 40s; }
+
+/* Fallbacks for older browsers without `inset` */
+.preloader, .pre-curtain, .mobile-menu, #hero-canvas, .hero-aurora { top: 0; right: 0; bottom: 0; left: 0; }
