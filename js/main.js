@@ -190,7 +190,7 @@
     const canvas = $("#hero-canvas");
     const ctx = canvas.getContext("2d");
     const hero = $(".hero");
-    const palette = [[45, 212, 191], [34, 211, 238], [56, 189, 248], [59, 130, 246], [29, 78, 216]];
+    const palette = [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179], [1, 65, 136]];
     let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
     const mouse = { x: -9999, y: -9999 };
 
