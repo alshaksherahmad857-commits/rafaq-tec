@@ -59,7 +59,6 @@
       gsap.fromTo("main, .nav-links, .footer", { opacity: 0.2 }, { opacity: 1, duration: 0.6, ease: "power2.out" });
     }
     if (window.ScrollTrigger) requestAnimationFrame(() => ScrollTrigger.refresh());
-    agent.restart();
     quiz.refresh();
   }
 
@@ -203,13 +202,11 @@
       if (fluid) {
         canvas.remove();
         const pos = (e) => { const r = glCanvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-        hero.addEventListener("pointermove", (e) => { const [x, y] = pos(e); fluid.move(x, y); }, { passive: true });
-        hero.addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); fluid.move(x, y); }, { passive: true });
-        hero.addEventListener("pointerleave", () => fluid.leave());
-        let inView = true;
-        const sync = () => fluid.setVisible(inView && !document.hidden);
-        new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
-        document.addEventListener("visibilitychange", sync);
+        // The canvas sits behind the whole page, so listen everywhere
+        addEventListener("pointermove", (e) => { const [x, y] = pos(e); fluid.move(x, y); }, { passive: true });
+        addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); fluid.move(x, y); }, { passive: true });
+        document.documentElement.addEventListener("pointerleave", () => fluid.leave());
+        document.addEventListener("visibilitychange", () => fluid.setVisible(!document.hidden));
         let rt;
         addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => fluid.resize(), 150); });
         // A single drop of ink by the logo once the page has loaded, as a hint
@@ -364,23 +361,20 @@
       wake();
     }
 
-    hero.addEventListener("pointermove", move, { passive: true });
-    hero.addEventListener("pointerdown", (e) => {
+    addEventListener("pointermove", move, { passive: true });
+    addEventListener("pointerdown", (e) => {
       const r = canvas.getBoundingClientRect();
       burst(e.clientX - r.left, e.clientY - r.top);
       prev.has = false;
     }, { passive: true });
-    hero.addEventListener("pointerleave", () => { prev.has = false; });
+    document.documentElement.addEventListener("pointerleave", () => { prev.has = false; });
 
     let resizeTimer;
     addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
     resize();
     if (reduce) return; // reduced motion: keep the calm, dark background only
 
-    let inView = true;
-    const sync = () => { visible = inView && !document.hidden; };
-    new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
-    document.addEventListener("visibilitychange", sync);
+    document.addEventListener("visibilitychange", () => { visible = !document.hidden; });
 
     // A single drop of ink by the logo once the page has loaded, as a hint
     setTimeout(() => {
@@ -392,78 +386,6 @@
     }, 1600);
   }
   heroInk();
-
-  /* ---------------- AI agent demo ---------------- */
-  const agent = (() => {
-    const box = $("#term-body");
-    const typing = $("#term-typing");
-    let run = 0;
-    let started = false;
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-    function add(type, text) {
-      const el = document.createElement("div");
-      el.className = `msg ${type}`;
-      if (text) el.textContent = text;
-      box.appendChild(el);
-      while (box.children.length > 8) box.firstElementChild.remove();
-      return el;
-    }
-
-    async function play() {
-      const me = ++run;
-      const alive = () => me === run;
-      box.innerHTML = "";
-      typing.textContent = "";
-      const script = I18N.agent[lang] || I18N.agent.en;
-      for (const step of script) {
-        if (!alive()) return;
-        if (step.type === "user") {
-          for (const ch of step.text) {
-            typing.textContent += ch;
-            await sleep(reduce ? 0 : 26);
-            if (!alive()) return;
-          }
-          await sleep(350);
-          typing.textContent = "";
-          add("user", step.text);
-          await sleep(600);
-        } else if (step.type === "tool") {
-          const el = add("tool");
-          const spin = document.createElement("span");
-          spin.className = "spinner";
-          const label = document.createElement("span");
-          label.textContent = step.text;
-          el.append(spin, label);
-          await sleep(850);
-          if (!alive()) return;
-          spin.replaceWith(Object.assign(document.createElement("span"), { textContent: "✓", style: "color:#3ee08f" }));
-          el.appendChild(Object.assign(document.createElement("span"), { className: "ok", textContent: step.result }));
-          await sleep(250);
-        } else {
-          const el = add("agent");
-          el.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
-          await sleep(900);
-          if (!alive()) return;
-          el.textContent = "";
-          for (const word of step.text.split(" ")) {
-            el.textContent += (el.textContent ? " " : "") + word;
-            await sleep(reduce ? 0 : 55);
-            if (!alive()) return;
-          }
-          await sleep(1400);
-        }
-      }
-      await sleep(4500);
-      if (alive()) play();
-    }
-
-    new IntersectionObserver(([entry], obs) => {
-      if (entry.isIntersecting) { started = true; play(); obs.disconnect(); }
-    }, { threshold: 0.3 }).observe($("#terminal"));
-
-    return { restart: () => { if (started) play(); } };
-  })();
 
   /* ---------------- Work cards -> contact ---------------- */
   $$(".work-card").forEach((card) => {

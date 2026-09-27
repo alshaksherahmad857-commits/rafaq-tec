@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rafaq Tec — Stronger Together</title>
   <meta name="description" content="Rafaq Tec is a digital studio for UI/UX design, web development, mobile apps and AI agents.">
-  <meta name="theme-color" content="#010c21">
+  <meta name="theme-color" content="#010714">
   <meta property="og:title" content="Rafaq Tec — Stronger Together">
   <meta property="og:description" content="UI/UX design, web & mobile development, and AI agents.">
   <meta property="og:image" content="https://rafaqtec.com/assets/logo-banner.png">
@@ -21,10 +21,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=6">
   <link rel="stylesheet" href="css/chatbot.css?v=5">
 </head>
 <body>
+
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
 
   <a href="#main-content" class="skip-link" data-i18n="a11y.skip">Skip to content</a>
 
@@ -50,7 +52,6 @@
     </a>
     <nav class="nav-links">
       <a href="#services" data-i18n="nav.services">Services</a>
-      <a href="#ai" data-i18n="nav.ai">AI Agents</a>
       <a href="#process" data-i18n="nav.process">Process</a>
       <a href="#work" data-i18n="nav.work">Work</a>
       <a href="#contact" data-i18n="nav.contact">Contact</a>
@@ -64,7 +65,6 @@
 
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
     <a href="#services" data-i18n="nav.services">Services</a>
-    <a href="#ai" data-i18n="nav.ai">AI Agents</a>
     <a href="#process" data-i18n="nav.process">Process</a>
     <a href="#work" data-i18n="nav.work">Work</a>
     <a href="#contact" data-i18n="nav.contact">Contact</a>
@@ -74,7 +74,6 @@
   <main id="main-content">
     <!-- ============ HERO ============ -->
     <section class="hero" id="home">
-      <canvas id="hero-canvas"></canvas>
       <div class="hero-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 
       <div class="container hero-inner">
@@ -171,32 +170,6 @@
             <ul class="tags"><li>LLM Agents</li><li>Automation</li><li>Chat UI</li><li>Integrations</li></ul>
             <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
           </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ AI AGENT ============ -->
-    <section class="section ai" id="ai">
-      <div class="container ai-grid">
-        <div class="ai-copy">
-          <span class="eyebrow reveal" data-i18n="ai.eyebrow">AI Agents &amp; Agentic UI</span>
-          <h2 class="section-title reveal" data-i18n="ai.title">Software that <span class="grad-text">thinks</span> and acts for you.</h2>
-          <p class="section-sub reveal" data-i18n="ai.sub">We design and engineer AI agents that plug into your data and tools, plus interfaces that make working with them feel natural.</p>
-          <ul class="ai-list">
-            <li class="reveal"><span class="ai-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span><div><b data-i18n="ai.f1.t">Workflow automation</b><p data-i18n="ai.f1.d">Agents that handle repetitive tasks across your CRM, email and databases.</p></div></li>
-            <li class="reveal"><span class="ai-ic"><svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-9l-5.5 4v-4H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/><circle cx="8" cy="11" r=".6" fill="currentColor" stroke="none"/><circle cx="12" cy="11" r=".6" fill="currentColor" stroke="none"/><circle cx="16" cy="11" r=".6" fill="currentColor" stroke="none"/></svg></span><div><b data-i18n="ai.f2.t">Conversational interfaces</b><p data-i18n="ai.f2.d">Chat and voice experiences designed with the same care as any great UI.</p></div></li>
-            <li class="reveal"><span class="ai-ic"><svg viewBox="0 0 24 24"><path d="M9 15 15 9M8.5 16.5l-1.8 1.8a3 3 0 0 1-4.2-4.2l3-3a3 3 0 0 1 4.2 0M15.5 7.5l1.8-1.8a3 3 0 0 1 4.2 4.2l-3 3a3 3 0 0 1-4.2 0"/></svg></span><div><b data-i18n="ai.f3.t">Deep integrations</b><p data-i18n="ai.f3.d">Secure connections to your APIs, documents and internal systems.</p></div></li>
-          </ul>
-        </div>
-
-        <div class="terminal reveal" id="terminal">
-          <div class="term-bar">
-            <i></i><i></i><i></i>
-            <span class="term-title">rafaq-agent — live</span>
-            <span class="term-status"><span class="pulse"></span>online</span>
-          </div>
-          <div class="term-body" id="term-body"></div>
-          <div class="term-input"><span class="term-caret">›</span><span id="term-typing"></span><span class="blink">▍</span></div>
         </div>
       </div>
     </section>
@@ -368,7 +341,6 @@
       </a>
       <nav class="footer-links">
         <a href="#services" data-i18n="nav.services">Services</a>
-        <a href="#ai" data-i18n="nav.ai">AI Agents</a>
         <a href="#work" data-i18n="nav.work">Work</a>
         <a href="#contact" data-i18n="nav.contact">Contact</a>
       </nav>
@@ -384,8 +356,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="js/i18n.js?v=4"></script>
-  <script src="js/fluid.js?v=7"></script>
-  <script src="js/main.js?v=12"></script>
+  <script src="js/fluid.js?v=8"></script>
+  <script src="js/main.js?v=13"></script>
   <script src="js/chatbot.js?v=5"></script>
 </body>
 </html>

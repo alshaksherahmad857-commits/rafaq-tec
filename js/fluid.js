@@ -20,8 +20,8 @@ window.RafaqFluid = function (canvas, opts) {
     force: 2600,
     bright: 0.34,          // ink brightness (kept low so text stays readable)
     glow: 0.7,             // strength of the soft glow around the ink
-    bg: [1 / 255, 7 / 255, 20 / 255],        // hero background
-    pageBg: [1 / 255, 12 / 255, 33 / 255],   // page background, faded in at the bottom
+    bg: [1 / 255, 7 / 255, 20 / 255],        // site background (#010714)
+    pageBg: [1 / 255, 7 / 255, 20 / 255],    // same solid colour: the canvas covers the whole page
     palette: [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179]],
   }, opts || {});
   if (o.lite) { o.simRes = 96; o.dyeRes = 512; o.pressureIters = 12; }
