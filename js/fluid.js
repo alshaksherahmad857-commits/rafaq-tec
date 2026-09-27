@@ -9,22 +9,22 @@ window.RafaqFluid = function (canvas, opts) {
   "use strict";
   const o = Object.assign({
     lite: false,
-    simRes: 128,
-    dyeRes: 900,
+    simRes: 192,
+    dyeRes: 1024,
     dyeFade: 3.4,          // higher = shorter trail
-    velFade: 1.1,
+    velFade: 2.4,          // water settles quickly, so the plume stays compact
     pressure: 0.8,
     pressureIters: 20,
-    curl: 22,              // swirl strength: the marbled curls
-    radius: 0.12,          // splat size (percent of screen)
-    force: 5200,
-    bright: 0.22,          // ink brightness (kept low so text stays readable)
-    glow: 1.1,             // strength of the soft glow around the ink
+    curl: 12,              // swirl strength: the marbled curls
+    radius: 0.035,         // splat size (percent of screen)
+    force: 2600,
+    bright: 0.34,          // ink brightness (kept low so text stays readable)
+    glow: 0.7,             // strength of the soft glow around the ink
     bg: [1 / 255, 7 / 255, 20 / 255],        // hero background
     pageBg: [1 / 255, 12 / 255, 33 / 255],   // page background, faded in at the bottom
     palette: [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179]],
   }, opts || {});
-  if (o.lite) { o.simRes = 64; o.dyeRes = 320; o.pressureIters = 12; }
+  if (o.lite) { o.simRes = 96; o.dyeRes = 512; o.pressureIters = 12; }
 
   // ---------- Context and formats ----------
   const params = { alpha: false, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false };
@@ -363,11 +363,12 @@ window.RafaqFluid = function (canvas, opts) {
     const dx = nx - ptr.x, dy = ny - ptr.y, dist = Math.hypot(dx, dy);
     if (dist < 0.25) return false;
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    const n = Math.min(10, Math.max(1, Math.ceil(dist / 6)));
+    // Steps of at most 3px keep the stroke continuous even on very fast moves
+    const n = Math.min(40, Math.max(1, Math.ceil(dist / 3)));
     for (let i = 1; i <= n; i++) {
       const px = ptr.x + (dx * i) / n, py = ptr.y + (dy * i) / n;
       const c = nextColor(0.07 / n).map((v) => v / Math.sqrt(n));
-      splatRaw(px / w, 1 - py / h, ((dx / n) / w) * o.force * 1.6, ((-dy / n) / h) * o.force * 1.6, c);
+      splatRaw(px / w, 1 - py / h, ((dx / n) / w) * o.force, ((-dy / n) / h) * o.force, c);
     }
     ptr.x = nx; ptr.y = ny;
     return true;
@@ -409,7 +410,7 @@ window.RafaqFluid = function (canvas, opts) {
       for (let i = 0; i < 5; i++) {
         const a = (i / 5) * Math.PI * 2 + Math.random();
         const c = nextColor().map((v) => v * 1.4);
-        splatRaw(x / w, 1 - y / h, Math.cos(a) * 900, Math.sin(a) * 900, c);
+        splatRaw(x / w, 1 - y / h, Math.cos(a) * 300, Math.sin(a) * 300, c);
       }
       wake();
     },
