@@ -64,6 +64,26 @@
 
   $("#lang-toggle").addEventListener("click", () => applyLang(lang === "en" ? "ar" : "en", true));
 
+  /* ---------------- Light / dark theme ---------------- */
+  const themeBtn = $("#theme-toggle");
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const theme = () => root.getAttribute("data-theme") === "light" ? "light" : "dark";
+  function applyTheme(next, save) {
+    root.setAttribute("data-theme", next);
+    if (save) { try { localStorage.setItem("rafaq-theme", next); } catch (e) {} }
+    themeBtn.setAttribute("aria-label", next === "light" ? "Switch to dark mode" : "Switch to light mode");
+    if (themeMeta) themeMeta.setAttribute("content", next === "light" ? "#f3f7fc" : "#010714");
+    window.dispatchEvent(new CustomEvent("rafaq:theme", { detail: next }));
+  }
+  themeBtn.addEventListener("click", () => applyTheme(theme() === "light" ? "dark" : "light", true));
+  // Follow the system setting until the visitor picks a theme themselves
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e) => {
+    let saved = null;
+    try { saved = localStorage.getItem("rafaq-theme"); } catch (err) {}
+    if (!saved) applyTheme(e.matches ? "light" : "dark", false);
+  });
+  applyTheme(theme(), false);
+
   /* ---------------- Smooth scroll ---------------- */
   let lenis = null;
   if (window.Lenis && !reduce && !lite) {
@@ -94,19 +114,15 @@
     });
   });
 
-  /* ---------------- Nav, menu & progress ---------------- */
+  /* ---------------- Nav & menu ---------------- */
   const nav = $("#nav");
-  const progress = $("#scroll-progress");
   let lastY = 0;
   let ticking = false;
   function onScroll() {
     const y = window.scrollY;
-    nav.classList.toggle("scrolled", y > 40);
     nav.classList.toggle("hidden", y > 500 && y > lastY + 2 && !root.classList.contains("menu-open"));
     if (y < lastY - 2) nav.classList.remove("hidden");
     lastY = y;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
     ticking = false;
   }
   addEventListener("scroll", () => {
@@ -198,7 +214,8 @@
       const glCanvas = canvas.cloneNode(false);
       canvas.after(glCanvas);
       let fluid = null;
-      try { fluid = window.RafaqFluid(glCanvas, { lite }); } catch (e) { fluid = null; }
+      const isLight = () => root.getAttribute("data-theme") === "light";
+      try { fluid = window.RafaqFluid(glCanvas, { lite, light: isLight() }); } catch (e) { fluid = null; }
       if (fluid) {
         canvas.remove();
         const pos = (e) => { const r = glCanvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
@@ -207,6 +224,7 @@
         addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); fluid.move(x, y); }, { passive: true });
         document.documentElement.addEventListener("pointerleave", () => fluid.leave());
         document.addEventListener("visibilitychange", () => fluid.setVisible(!document.hidden));
+        addEventListener("rafaq:theme", () => fluid.setTheme(isLight()));
         let rt;
         addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => fluid.resize(), 150); });
         // A single drop of ink by the logo once the page has loaded, as a hint
@@ -223,7 +241,15 @@
 
     // Fallback: soft canvas ink for devices without the GPU features above
     const ctx = canvas.getContext("2d", { alpha: false });
-    const BG = [1, 7, 20];                                    // a touch darker than the page
+    let BG = [1, 7, 20];                                      // site background, swapped for light mode
+    let blend = "screen";
+    const setThemeColors = () => {
+      const light = root.getAttribute("data-theme") === "light";
+      BG = light ? [243, 247, 252] : [1, 7, 20];
+      blend = light ? "source-over" : "screen";           // on a pale page ink darkens instead of glowing
+    };
+    setThemeColors();
+    addEventListener("rafaq:theme", () => { setThemeColors(); paintBg(); });
     const PALETTE = [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179], [1, 65, 136]];
     const MAX = lite ? 220 : 600;
     const RES = lite ? 0.35 : 0.5;                            // canvas pixels per CSS pixel
@@ -299,7 +325,7 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.setTransform(RES, 0, 0, RES, 0, 0);
-      ctx.globalCompositeOperation = "screen";            // screen never burns out to white
+      ctx.globalCompositeOperation = blend;               // screen never burns out to white
       for (let i = drops.length - 1; i >= 0; i--) {
         const d = drops[i];
         d.life += dt / d.dur;

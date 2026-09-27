@@ -21,7 +21,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <script>
+    /* Pick the theme before the page paints: saved choice first, then the system setting */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("rafaq-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css?v=7">
   <link rel="stylesheet" href="css/chatbot.css?v=5">
 </head>
 <body>
@@ -42,7 +51,6 @@
   <div class="cursor" id="cursor"><span class="cursor-label" id="cursor-label"></span></div>
   <div class="cursor-dot" id="cursor-dot"></div>
   <div class="grain" aria-hidden="true"></div>
-  <div class="scroll-progress" id="scroll-progress"></div>
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
@@ -57,6 +65,10 @@
       <a href="#contact" data-i18n="nav.contact">Contact</a>
     </nav>
     <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+      </button>
       <button class="lang-toggle" id="lang-toggle" aria-label="Switch language"><span class="lang-en">EN</span><span class="lang-ar">ع</span></button>
       <a href="#contact" class="btn btn-sm btn-primary magnetic" data-i18n="nav.cta">Start a project</a>
       <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
@@ -271,12 +283,12 @@
     <section class="stack" aria-label="Technologies">
       <p class="stack-label reveal" data-i18n="stack.label">Tools &amp; technologies we master</p>
       <div class="stack-row"><div class="stack-track">
-        <span>Figma</span><span>React</span><span>Next.js</span><span>Flutter</span><span>Swift</span><span>Kotlin</span><span>Node.js</span><span>TypeScript</span><span>Tailwind</span><span>Framer</span>
-        <span>Figma</span><span>React</span><span>Next.js</span><span>Flutter</span><span>Swift</span><span>Kotlin</span><span>Node.js</span><span>TypeScript</span><span>Tailwind</span><span>Framer</span>
+        <span style="--c:#F24E1E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#figma"/></svg>Figma</span><span style="--c:#61DAFB"><svg aria-hidden="true"><use href="assets/icons/tools.svg#react"/></svg>React</span><span class="mono" style="--c:#000000"><svg aria-hidden="true"><use href="assets/icons/tools.svg#nextdotjs"/></svg>Next.js</span><span style="--c:#3178C6"><svg aria-hidden="true"><use href="assets/icons/tools.svg#typescript"/></svg>TypeScript</span><span style="--c:#5FA04E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#nodedotjs"/></svg>Node.js</span><span style="--c:#06B6D4"><svg aria-hidden="true"><use href="assets/icons/tools.svg#tailwindcss"/></svg>Tailwind</span><span style="--c:#02569B"><svg aria-hidden="true"><use href="assets/icons/tools.svg#flutter"/></svg>Flutter</span><span style="--c:#F05138"><svg aria-hidden="true"><use href="assets/icons/tools.svg#swift"/></svg>Swift</span><span style="--c:#7F52FF"><svg aria-hidden="true"><use href="assets/icons/tools.svg#kotlin"/></svg>Kotlin</span><span style="--c:#0055FF"><svg aria-hidden="true"><use href="assets/icons/tools.svg#framer"/></svg>Framer</span><span style="--c:#DD2C00"><svg aria-hidden="true"><use href="assets/icons/tools.svg#firebase"/></svg>Firebase</span><span style="--c:#3FCF8E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#supabase"/></svg>Supabase</span>
+        <span aria-hidden="true" style="--c:#F24E1E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#figma"/></svg>Figma</span><span aria-hidden="true" style="--c:#61DAFB"><svg aria-hidden="true"><use href="assets/icons/tools.svg#react"/></svg>React</span><span class="mono" aria-hidden="true" style="--c:#000000"><svg aria-hidden="true"><use href="assets/icons/tools.svg#nextdotjs"/></svg>Next.js</span><span aria-hidden="true" style="--c:#3178C6"><svg aria-hidden="true"><use href="assets/icons/tools.svg#typescript"/></svg>TypeScript</span><span aria-hidden="true" style="--c:#5FA04E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#nodedotjs"/></svg>Node.js</span><span aria-hidden="true" style="--c:#06B6D4"><svg aria-hidden="true"><use href="assets/icons/tools.svg#tailwindcss"/></svg>Tailwind</span><span aria-hidden="true" style="--c:#02569B"><svg aria-hidden="true"><use href="assets/icons/tools.svg#flutter"/></svg>Flutter</span><span aria-hidden="true" style="--c:#F05138"><svg aria-hidden="true"><use href="assets/icons/tools.svg#swift"/></svg>Swift</span><span aria-hidden="true" style="--c:#7F52FF"><svg aria-hidden="true"><use href="assets/icons/tools.svg#kotlin"/></svg>Kotlin</span><span aria-hidden="true" style="--c:#0055FF"><svg aria-hidden="true"><use href="assets/icons/tools.svg#framer"/></svg>Framer</span><span aria-hidden="true" style="--c:#DD2C00"><svg aria-hidden="true"><use href="assets/icons/tools.svg#firebase"/></svg>Firebase</span><span aria-hidden="true" style="--c:#3FCF8E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#supabase"/></svg>Supabase</span>
       </div></div>
       <div class="stack-row rev"><div class="stack-track">
-        <span>Python</span><span>LLM Agents</span><span>RAG</span><span>PostgreSQL</span><span>Firebase</span><span>AWS</span><span>Docker</span><span>GSAP</span><span>Three.js</span><span>Supabase</span>
-        <span>Python</span><span>LLM Agents</span><span>RAG</span><span>PostgreSQL</span><span>Firebase</span><span>AWS</span><span>Docker</span><span>GSAP</span><span>Three.js</span><span>Supabase</span>
+        <span style="--c:#3776AB"><svg aria-hidden="true"><use href="assets/icons/tools.svg#python"/></svg>Python</span><span style="--c:#EE4C2C"><svg aria-hidden="true"><use href="assets/icons/tools.svg#pytorch"/></svg>PyTorch</span><span style="--c:#FF6F00"><svg aria-hidden="true"><use href="assets/icons/tools.svg#tensorflow"/></svg>TensorFlow</span><span style="--c:#F7931E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#scikitlearn"/></svg>scikit-learn</span><span class="mono" style="--c:#150458"><svg aria-hidden="true"><use href="assets/icons/tools.svg#pandas"/></svg>pandas</span><span style="--c:#F37626"><svg aria-hidden="true"><use href="assets/icons/tools.svg#jupyter"/></svg>Jupyter</span><span style="--c:#FFD21E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#huggingface"/></svg>Hugging Face</span><span class="mono" style="--c:#1C3C3C"><svg aria-hidden="true"><use href="assets/icons/tools.svg#langchain"/></svg>LangChain</span><span class="mono" style="--c:#412991"><svg aria-hidden="true"><use href="assets/icons/tools.svg#openai"/></svg>OpenAI</span><span class="mono" style="--c:#191919"><svg aria-hidden="true"><use href="assets/icons/tools.svg#anthropic"/></svg>Anthropic</span><span style="--c:#4169E1"><svg aria-hidden="true"><use href="assets/icons/tools.svg#postgresql"/></svg>PostgreSQL</span><span style="--c:#47A248"><svg aria-hidden="true"><use href="assets/icons/tools.svg#mongodb"/></svg>MongoDB</span><span style="--c:#2496ED"><svg aria-hidden="true"><use href="assets/icons/tools.svg#docker"/></svg>Docker</span><span class="mono" style="--c:#232F3E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#amazonwebservices"/></svg>AWS</span>
+        <span aria-hidden="true" style="--c:#3776AB"><svg aria-hidden="true"><use href="assets/icons/tools.svg#python"/></svg>Python</span><span aria-hidden="true" style="--c:#EE4C2C"><svg aria-hidden="true"><use href="assets/icons/tools.svg#pytorch"/></svg>PyTorch</span><span aria-hidden="true" style="--c:#FF6F00"><svg aria-hidden="true"><use href="assets/icons/tools.svg#tensorflow"/></svg>TensorFlow</span><span aria-hidden="true" style="--c:#F7931E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#scikitlearn"/></svg>scikit-learn</span><span class="mono" aria-hidden="true" style="--c:#150458"><svg aria-hidden="true"><use href="assets/icons/tools.svg#pandas"/></svg>pandas</span><span aria-hidden="true" style="--c:#F37626"><svg aria-hidden="true"><use href="assets/icons/tools.svg#jupyter"/></svg>Jupyter</span><span aria-hidden="true" style="--c:#FFD21E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#huggingface"/></svg>Hugging Face</span><span class="mono" aria-hidden="true" style="--c:#1C3C3C"><svg aria-hidden="true"><use href="assets/icons/tools.svg#langchain"/></svg>LangChain</span><span class="mono" aria-hidden="true" style="--c:#412991"><svg aria-hidden="true"><use href="assets/icons/tools.svg#openai"/></svg>OpenAI</span><span class="mono" aria-hidden="true" style="--c:#191919"><svg aria-hidden="true"><use href="assets/icons/tools.svg#anthropic"/></svg>Anthropic</span><span aria-hidden="true" style="--c:#4169E1"><svg aria-hidden="true"><use href="assets/icons/tools.svg#postgresql"/></svg>PostgreSQL</span><span aria-hidden="true" style="--c:#47A248"><svg aria-hidden="true"><use href="assets/icons/tools.svg#mongodb"/></svg>MongoDB</span><span aria-hidden="true" style="--c:#2496ED"><svg aria-hidden="true"><use href="assets/icons/tools.svg#docker"/></svg>Docker</span><span class="mono" aria-hidden="true" style="--c:#232F3E"><svg aria-hidden="true"><use href="assets/icons/tools.svg#amazonwebservices"/></svg>AWS</span>
       </div></div>
     </section>
 
@@ -356,8 +368,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="js/i18n.js?v=4"></script>
-  <script src="js/fluid.js?v=8"></script>
-  <script src="js/main.js?v=13"></script>
+  <script src="js/fluid.js?v=9"></script>
+  <script src="js/main.js?v=14"></script>
   <script src="js/chatbot.js?v=5"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@ window.RafaqFluid = function (canvas, opts) {
   "use strict";
   const o = Object.assign({
     lite: false,
+    light: false,          // light theme: ink tints a pale background
     simRes: 192,
     dyeRes: 1024,
     dyeFade: 3.4,          // higher = shorter trail
@@ -131,7 +132,7 @@ window.RafaqFluid = function (canvas, opts) {
         gl_FragColor = vec4(c, 1.0);
       }`,
     display: HEAD + `
-      uniform sampler2D uTexture, uBloom; uniform vec3 bg, pageBg; uniform vec2 texelSize; uniform float glow;
+      uniform sampler2D uTexture, uBloom; uniform vec3 bg, pageBg; uniform vec2 texelSize; uniform float glow, light;
       void main () {
         vec3 c = texture2D(uTexture, vUv).rgb;
         // Soft shading from the ink's own gradient gives the marbled, silky look
@@ -145,7 +146,14 @@ window.RafaqFluid = function (canvas, opts) {
         // Gentle tone curve: bright spots roll off instead of clipping
         c = c / (1.0 + c * 0.9);
         vec3 base = mix(pageBg, bg, smoothstep(0.0, 0.22, vUv.y));
-        gl_FragColor = vec4(base + c, 1.0);
+        if (light > 0.5) {
+          // On a light page ink darkens the water instead of glowing: tint towards the pure hue
+          float d = max(c.r, max(c.g, c.b));
+          vec3 hue = c / max(d, 0.0001) * vec3(0.55, 0.72, 0.9);
+          gl_FragColor = vec4(mix(base, hue, clamp(d * 2.4, 0.0, 0.7)), 1.0);
+        } else {
+          gl_FragColor = vec4(base + c, 1.0);
+        }
       }`,
   };
 
@@ -321,6 +329,7 @@ window.RafaqFluid = function (canvas, opts) {
     gl.uniform1i(u.uTexture, dye.read.bind(0));
     gl.uniform1i(u.uBloom, bloomB.bind(1));
     gl.uniform1f(u.glow, o.glow);
+    gl.uniform1f(u.light, o.light ? 1 : 0);
     gl.uniform3fv(u.bg, o.bg);
     gl.uniform3fv(u.pageBg, o.pageBg);
     blit(null);
@@ -395,6 +404,7 @@ window.RafaqFluid = function (canvas, opts) {
     requestAnimationFrame(frame);
   }
 
+  if (o.light) o.bg = o.pageBg = [243 / 255, 247 / 255, 252 / 255];
   render();
 
   return {
@@ -413,6 +423,11 @@ window.RafaqFluid = function (canvas, opts) {
         splatRaw(x / w, 1 - y / h, Math.cos(a) * 300, Math.sin(a) * 300, c);
       }
       wake();
+    },
+    setTheme(isLight) {
+      o.light = !!isLight;
+      o.bg = o.pageBg = isLight ? [243 / 255, 247 / 255, 252 / 255] : [1 / 255, 7 / 255, 20 / 255];
+      render();
     },
     setVisible(v) { visible = v; if (!v) running = false; },
     resize() { if (sizeCanvas()) { try { initTargets(); } catch (e) { /* keep old */ } } render(); },
