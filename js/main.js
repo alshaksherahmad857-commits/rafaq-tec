@@ -190,10 +190,51 @@
      in the logo colours: it blooms, curls like ink in water, and fades
      within about a second. Nothing runs while nobody is moving. */
   function heroInk() {
-    const canvas = $("#hero-canvas");
-    const ctx = canvas.getContext("2d", { alpha: false });
+    let canvas = $("#hero-canvas");
     const hero = $(".hero");
-    const BG = [1, 12, 33];                                   // #010C21
+
+    // Preferred: a real fluid simulation on the GPU. Tried on a fresh canvas so a
+    // failed WebGL attempt never blocks the simple canvas version below.
+    if (!reduce && window.RafaqFluid) {
+      const glCanvas = canvas.cloneNode(false);
+      canvas.after(glCanvas);
+      let fluid = null;
+      try { fluid = window.RafaqFluid(glCanvas, { lite }); } catch (e) { fluid = null; }
+      if (fluid) {
+        canvas.remove();
+        const prev = { x: 0, y: 0, t: 0, has: false };
+        const pos = (e) => { const r = glCanvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+        hero.addEventListener("pointermove", (e) => {
+          const [x, y] = pos(e), now = performance.now();
+          if (!prev.has || now - prev.t > 120) { Object.assign(prev, { x, y, t: now, has: true }); return; }
+          const dx = x - prev.x, dy = y - prev.y;
+          if (Math.abs(dx) + Math.abs(dy) < 1) return;
+          fluid.move(x, y, dx, dy);
+          Object.assign(prev, { x, y, t: now });
+        }, { passive: true });
+        hero.addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); prev.has = false; }, { passive: true });
+        hero.addEventListener("pointerleave", () => { prev.has = false; });
+        let inView = true;
+        const sync = () => fluid.setVisible(inView && !document.hidden);
+        new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
+        document.addEventListener("visibilitychange", sync);
+        let rt;
+        addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => fluid.resize(), 150); });
+        // A single drop of ink by the logo once the page has loaded, as a hint
+        setTimeout(() => {
+          const mark = $("#hero-mark"), r = glCanvas.getBoundingClientRect();
+          if (!mark || !r.width) return;
+          const m = mark.getBoundingClientRect();
+          fluid.burst(m.left + m.width / 2 - r.left, m.top + m.height / 2 - r.top);
+        }, 1600);
+        return;
+      }
+      glCanvas.remove();
+    }
+
+    // Fallback: soft canvas ink for devices without the GPU features above
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const BG = [1, 7, 20];                                    // a touch darker than the page
     const PALETTE = [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179], [1, 65, 136]];
     const MAX = lite ? 220 : 600;
     const RES = lite ? 0.35 : 0.5;                            // canvas pixels per CSS pixel
@@ -251,8 +292,8 @@
         r: (big ? 26 : 12) + Math.random() * (big ? 24 : 12),
         grow: 2.4 + Math.random() * 2,
         life: 0,
-        dur: 0.9 + Math.random() * 0.5,                          // seconds: short, so it feels crisp
-        a: 0.26 + Math.random() * 0.2,
+        dur: 0.7 + Math.random() * 0.4,                          // seconds: short, so it feels crisp
+        a: 0.18 + Math.random() * 0.14,
         rot: Math.random() * Math.PI * 2,
         spin: (Math.random() - 0.5) * 1.2,
         s: sprites[ci][(Math.random() * 3) | 0],
