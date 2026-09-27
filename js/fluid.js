@@ -18,7 +18,8 @@ window.RafaqFluid = function (canvas, opts) {
     curl: 26,              // swirl strength: the marbled curls
     radius: 0.12,          // splat size (percent of screen)
     force: 5200,
-    bright: 0.24,          // ink brightness (kept low so text stays readable)
+    bright: 0.22,          // ink brightness (kept low so text stays readable)
+    glow: 1.1,             // strength of the soft glow around the ink
     bg: [1 / 255, 7 / 255, 20 / 255],        // hero background
     pageBg: [1 / 255, 12 / 255, 33 / 255],   // page background, faded in at the bottom
     palette: [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179]],
@@ -121,8 +122,16 @@ window.RafaqFluid = function (canvas, opts) {
     fade: HEAD + `
       uniform sampler2D uTexture; uniform float value;
       void main () { gl_FragColor = value * texture2D(uTexture, vUv); }`,
+    blur: HEAD + `
+      uniform sampler2D uTexture; uniform vec2 dir;
+      void main () {
+        vec3 c = texture2D(uTexture, vUv).rgb * 0.227;
+        c += (texture2D(uTexture, vUv + dir * 1.385).rgb + texture2D(uTexture, vUv - dir * 1.385).rgb) * 0.316;
+        c += (texture2D(uTexture, vUv + dir * 3.231).rgb + texture2D(uTexture, vUv - dir * 3.231).rgb) * 0.070;
+        gl_FragColor = vec4(c, 1.0);
+      }`,
     display: HEAD + `
-      uniform sampler2D uTexture; uniform vec3 bg, pageBg; uniform vec2 texelSize;
+      uniform sampler2D uTexture, uBloom; uniform vec3 bg, pageBg; uniform vec2 texelSize; uniform float glow;
       void main () {
         vec3 c = texture2D(uTexture, vUv).rgb;
         // Soft shading from the ink's own gradient gives the marbled, silky look
@@ -131,6 +140,8 @@ window.RafaqFluid = function (canvas, opts) {
         vec3 n = normalize(vec3(dx, dy, length(texelSize)));
         float shade = clamp(dot(n, vec3(0.0, 0.0, 1.0)) + 0.55, 0.55, 1.0);
         c *= shade;
+        // Soft glow around the plumes, like light inside the ink
+        c += texture2D(uBloom, vUv).rgb * glow;
         // Gentle tone curve: bright spots roll off instead of clipping
         c = c / (1.0 + c * 0.9);
         vec3 base = mix(pageBg, bg, smoothstep(0.0, 0.22, vUv.y));
@@ -211,7 +222,7 @@ window.RafaqFluid = function (canvas, opts) {
     return aspect > 1 ? { w: hi, h: lo } : { w: lo, h: hi };
   }
 
-  let dye, velocity, divergence, curlTex, pressure;
+  let dye, velocity, divergence, curlTex, pressure, bloomA, bloomB;
   function sizeCanvas() {
     const dpr = Math.min(window.devicePixelRatio || 1, o.lite ? 1 : 1.5);
     const w = Math.max(2, Math.floor(canvas.clientWidth * dpr));
@@ -228,6 +239,9 @@ window.RafaqFluid = function (canvas, opts) {
     divergence = fbo(s.w, s.h, formatR, gl.NEAREST);
     curlTex = fbo(s.w, s.h, formatR, gl.NEAREST);
     pressure = double(s.w, s.h, formatR, gl.NEAREST);
+    const b = res(o.dyeRes / 4);
+    bloomA = fbo(b.w, b.h, formatRGBA, L);
+    bloomB = fbo(b.w, b.h, formatRGBA, L);
   }
   try { sizeCanvas(); initTargets(); } catch (e) { return null; }
 
@@ -288,9 +302,25 @@ window.RafaqFluid = function (canvas, opts) {
   }
 
   function render() {
-    const u = use("display");
+    // Glow: blur a small copy of the ink, twice for a wide, soft halo
+    let u = use("blur");
+    gl.uniform2f(u.texelSize, bloomA.tx, bloomA.ty);
+    let src = dye.read;
+    for (let i = 0; i < 2; i++) {
+      gl.uniform1i(u.uTexture, src.bind(0));
+      gl.uniform2f(u.dir, bloomA.tx * (1 + i), 0);
+      blit(bloomA);
+      gl.uniform1i(u.uTexture, bloomA.bind(0));
+      gl.uniform2f(u.dir, 0, bloomA.ty * (1 + i));
+      blit(bloomB);
+      src = bloomB;
+    }
+
+    u = use("display");
     gl.uniform2f(u.texelSize, 1 / gl.drawingBufferWidth, 1 / gl.drawingBufferHeight);
     gl.uniform1i(u.uTexture, dye.read.bind(0));
+    gl.uniform1i(u.uBloom, bloomB.bind(1));
+    gl.uniform1f(u.glow, o.glow);
     gl.uniform3fv(u.bg, o.bg);
     gl.uniform3fv(u.pageBg, o.pageBg);
     blit(null);
@@ -315,7 +345,7 @@ window.RafaqFluid = function (canvas, opts) {
   // Colour travels slowly along the logo gradient while you move
   let hue = Math.random() * o.palette.length;
   function nextColor() {
-    hue = (hue + 0.045) % o.palette.length;
+    hue = (hue + 0.07) % o.palette.length;
     const i = Math.floor(hue), f = hue - i;
     const a = o.palette[i], b = o.palette[(i + 1) % o.palette.length];
     const k = o.bright / 255;
