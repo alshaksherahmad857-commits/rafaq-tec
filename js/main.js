@@ -185,114 +185,117 @@
     });
   });
 
-  /* ---------------- Hero particle field ---------------- */
-  function heroCanvas() {
+  /* ---------------- Hero ambient light ----------------
+     Slow, breathing pools of light in the logo colours, plus one soft
+     light that drifts after the cursor (or a finger). Drawn on a tiny
+     canvas and scaled up by CSS, so it stays smooth and cheap. */
+  function heroLight() {
     const canvas = $("#hero-canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     const hero = $(".hero");
-    const palette = [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179], [1, 65, 136]];
-    let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
-    const mouse = { x: -9999, y: -9999 };
+    const BG = "#010c21";
+    const TAU = Math.PI * 2;
 
-    // Pre-built colour strings (no string building inside the frame loop)
-    const BUCKETS = 24;
-    const colors = Array.from({ length: BUCKETS }, (_, n) => {
-      const tt = (n / (BUCKETS - 1)) * (palette.length - 1);
-      const i = Math.floor(tt), f = tt - i;
-      const a = palette[i], b = palette[Math.min(i + 1, palette.length - 1)];
-      return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(",")})`;
-    });
-    const colorAt = (x) => colors[Math.max(0, Math.min(BUCKETS - 1, ((x / w) * (BUCKETS - 1)) | 0))];
+    // x, y: resting spot (0..1) · ax, ay: drift · p: seconds per loop · r: size · a: strength
+    const pools = [
+      { c: [1, 108, 240], x: 0.18, y: 0.30, ax: 0.10, ay: 0.08, p: 70, r: 0.55, a: 0.42, ph: 0.0 },
+      { c: [9, 221, 236], x: 0.78, y: 0.28, ax: 0.08, ay: 0.10, p: 88, r: 0.42, a: 0.26, ph: 1.7 },
+      { c: [1, 65, 136], x: 0.62, y: 0.85, ax: 0.14, ay: 0.06, p: 95, r: 0.62, a: 0.55, ph: 3.1 },
+      { c: [84, 239, 228], x: 0.35, y: 0.95, ax: 0.10, ay: 0.05, p: 110, r: 0.36, a: 0.16, ph: 4.4 },
+      { c: [1, 95, 179], x: 0.95, y: 0.65, ax: 0.05, ay: 0.12, p: 80, r: 0.45, a: 0.35, ph: 5.2 },
+    ];
 
-    function spawn() {
-      const n = lite ? Math.min(36, Math.floor((w * h) / 30000)) : Math.min(90, Math.floor((w * h) / 16000));
-      pts = Array.from({ length: n }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.6 + 0.6,
-      }));
-    }
+    const scale = lite ? 0.1 : 0.16; // canvas pixels per CSS pixel
+    let w = 1, h = 1, big = 1, running = true, last = 0;
+    const target = { x: 0.7, y: 0.45, active: false };
+    const light = { x: 0.7, y: 0.45, glow: 0 };
+
     function resize() {
-      const dpr = Math.min(devicePixelRatio || 1, lite ? 1 : 1.5);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Mobile browsers fire resize when the address bar hides: only respawn on real width changes
-      if (Math.abs(w - lastW) > 80 || !pts.length) { spawn(); lastW = w; }
+      const cw = canvas.clientWidth || innerWidth, ch = canvas.clientHeight || innerHeight;
+      w = Math.max(24, Math.round(cw * scale));
+      h = Math.max(24, Math.round(ch * scale));
+      canvas.width = w; canvas.height = h;
+      big = Math.max(w, h);
     }
 
-    // Measure real performance once; drop to lite mode if the device struggles
-    let probeFrames = 0, probeStart = 0;
-    function probe(now) {
-      if (lite || probeFrames < 0) return;
-      if (!probeStart) probeStart = now;
-      if (++probeFrames === 60) {
-        const fps = 60000 / (now - probeStart);
-        probeFrames = -1;
-        if (fps < 40) {
-          lite = true;
-          root.classList.add("lite");
-          if (lenis) { lenis.destroy(); lenis = null; }
-          resize(); spawn();
-        }
+    function glow(x, y, r, c, a) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${a})`);
+      g.addColorStop(0.45, `rgba(${c[0]},${c[1]},${c[2]},${a * 0.42})`);
+      g.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+
+    function draw(t) {
+      const s = t / 1000;
+      // One slow "breath" every 10 seconds, like calm breathing
+      const breath = 0.5 + 0.5 * Math.sin((s / 10) * TAU);
+
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "screen";
+
+      for (const p of pools) {
+        const k = (s / p.p) * TAU + p.ph;
+        const x = (p.x + Math.sin(k) * p.ax) * w;
+        const y = (p.y + Math.cos(k * 0.8) * p.ay) * h;
+        glow(x, y, p.r * big * (0.94 + breath * 0.1), p.c, p.a * (0.85 + breath * 0.15));
       }
+
+      // With no cursor, the light wanders on its own in a slow figure eight
+      if (!target.active) {
+        const k = (s / 40) * TAU;
+        target.x = 0.66 + Math.sin(k) * 0.16;
+        target.y = 0.45 + Math.sin(k * 2) * 0.12;
+      }
+      // Heavy easing makes the light float after the pointer instead of snapping to it
+      light.x += (target.x - light.x) * 0.035;
+      light.y += (target.y - light.y) * 0.035;
+      light.glow += ((target.active ? 1 : 0.6) - light.glow) * 0.02;
+
+      const lx = light.x * w, ly = light.y * h;
+      glow(lx, ly, big * 0.34, [9, 221, 236], 0.30 * light.glow);
+      glow(lx, ly, big * 0.16, [84, 239, 228], 0.26 * light.glow);
+
+      // Fade into the page colour at the bottom so the next section starts cleanly
+      ctx.globalCompositeOperation = "source-over";
+      const fade = ctx.createLinearGradient(0, h * 0.72, 0, h);
+      fade.addColorStop(0, "rgba(1,12,33,0)");
+      fade.addColorStop(1, BG);
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, h * 0.72, w, h * 0.28);
     }
 
     function frame(now) {
       if (!running) return;
       requestAnimationFrame(frame);
-      probe(now);
-      if (lite && now - last < 33) return; // ~30fps is plenty on weak devices
+      if (now - last < (lite ? 40 : 16)) return;
       last = now;
-      ctx.clearRect(0, 0, w, h);
-      for (const p of pts) {
-        const dx = p.x - mouse.x, dy = p.y - mouse.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < 22000) {
-          const f = (1 - d2 / 22000) * 0.6;
-          p.vx += (dx / Math.sqrt(d2 + 1)) * f;
-          p.vy += (dy / Math.sqrt(d2 + 1)) * f;
-        }
-        p.vx *= 0.97; p.vy *= 0.97;
-        p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02;
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
-      }
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i < pts.length; i++) {
-        const a = pts[i];
-        const c = colorAt(a.x);
-        ctx.strokeStyle = c;
-        for (let j = i + 1; j < pts.length; j++) {
-          const b = pts[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 15000) {
-            ctx.globalAlpha = (1 - d2 / 15000) * 0.28;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-        const mx = a.x - mouse.x, my = a.y - mouse.y;
-        const md = mx * mx + my * my;
-        if (md < 40000) {
-          ctx.globalAlpha = (1 - md / 40000) * 0.5;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
-        }
-        ctx.globalAlpha = 0.9;
-        ctx.fillStyle = c;
-        ctx.fillRect(a.x - a.r, a.y - a.r, a.r * 2, a.r * 2);
-      }
-      ctx.globalAlpha = 1;
+      draw(now);
     }
-    hero.addEventListener("mousemove", (e) => {
+
+    const follow = (e) => {
       const r = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
-    });
-    hero.addEventListener("mouseleave", () => { mouse.x = mouse.y = -9999; });
+      target.x = (e.clientX - r.left) / r.width;
+      target.y = (e.clientY - r.top) / r.height;
+      target.active = true;
+    };
+    hero.addEventListener("pointermove", follow, { passive: true });
+    hero.addEventListener("pointerdown", follow, { passive: true });
+    hero.addEventListener("pointerleave", () => { target.active = false; });
+
     let resizeTimer;
-    addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
+    addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { resize(); if (reduce) draw(0); }, 150);
+    });
     resize();
+
+    // Reduced motion: one calm still frame, no movement
+    if (reduce) { light.glow = 0.6; draw(0); return; }
+
     // Only animate while the hero is on screen and the tab is visible
     let inView = true;
     const sync = () => {
@@ -304,7 +307,7 @@
     document.addEventListener("visibilitychange", sync);
     requestAnimationFrame(frame);
   }
-  if (!reduce) heroCanvas();
+  heroLight();
 
   /* ---------------- AI agent demo ---------------- */
   const agent = (() => {

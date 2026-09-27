@@ -13,19 +13,25 @@
 .rb [hidden] { display: none !important; }
 
 /* ---------- Floating robot button ---------- */
+@property --rb-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 .rb-fab {
-  position: relative; width: 70px; height: 70px; padding: 0; border: 0; border-radius: 50%;
-  background: radial-gradient(circle at 50% 40%, var(--rb-deep), var(--rb-ink) 72%);
-  box-shadow: 0 0 0 1px rgba(84, 239, 228, .35), 0 14px 40px -8px rgba(1, 108, 240, .75), inset 0 0 20px rgba(9, 221, 236, .18);
+  position: relative; width: 72px; height: 72px; padding: 0; border: 3px solid transparent; border-radius: 50%;
+  /* White core with a slowly turning ring in the brand colors */
+  background:
+    radial-gradient(circle at 34% 28%, #ffffff 0%, #effdfe 55%, #c8f4f8 100%) padding-box,
+    conic-gradient(from var(--rb-a), #54efe4, #09ddec, #016cf0, #015fb3, #54efe4) border-box;
+  box-shadow: 0 0 0 5px rgba(84, 239, 228, .14), 0 14px 38px -6px rgba(9, 221, 236, .75), 0 0 60px -10px rgba(1, 108, 240, .7);
   cursor: pointer; display: grid; place-items: center; transition: transform .35s var(--ease, ease), box-shadow .35s;
+  animation: rb-spin 7s linear infinite;
 }
-.rb-fab:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 0 0 1px rgba(84, 239, 228, .6), 0 18px 50px -8px rgba(9, 221, 236, .7), inset 0 0 20px rgba(9, 221, 236, .25); }
+.rb-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 0 7px rgba(84, 239, 228, .2), 0 18px 46px -6px rgba(9, 221, 236, .9), 0 0 80px -10px rgba(1, 108, 240, .85); }
+@keyframes rb-spin { to { --rb-a: 360deg; } }
 .rb-fab:focus-visible, .rb button:focus-visible, .rb-input:focus-visible { outline: 2px solid var(--rb-mint); outline-offset: 3px; }
-.rb-bot { width: 50px; height: 50px; display: block; animation: rb-float 3.6s ease-in-out infinite; }
+.rb-bot { width: 52px; height: 52px; display: block; animation: rb-float 3.6s ease-in-out infinite; }
 .rb-svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .rb-eyes { transform-origin: 32px 33px; animation: rb-blink 5s infinite; }
 .rb-light { animation: rb-glow 2.2s ease-in-out infinite; }
-.rb-ping { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--rb-cyan); opacity: 0; animation: rb-ping 3.2s ease-out infinite; pointer-events: none; }
+.rb-ping { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--rb-mint); opacity: 0; animation: rb-ping 3.2s ease-out infinite; pointer-events: none; }
 .rb.is-open .rb-ping { display: none; }
 .rb.is-open .rb-bot { animation: none; }
 
@@ -114,8 +120,8 @@
 @media (max-width: 520px) {
   .rb { right: 14px; bottom: 14px; }
   .rb[dir="rtl"] { left: 14px; }
-  .rb-fab { width: 60px; height: 60px; }
-  .rb-bot { width: 42px; height: 42px; }
+  .rb-fab { width: 62px; height: 62px; }
+  .rb-bot { width: 44px; height: 44px; }
   .rb-panel { width: calc(100vw - 28px); height: calc(100vh - 110px); height: calc(100dvh - 110px); }
 }
 
