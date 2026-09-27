@@ -185,126 +185,221 @@
     });
   });
 
-  /* ---------------- Hero particle field ---------------- */
-  function heroCanvas() {
-    const canvas = $("#hero-canvas");
-    const ctx = canvas.getContext("2d");
+  /* ---------------- Hero ink ----------------
+     A dark, still background. Moving the cursor (or a finger) drops ink
+     in the logo colours: it blooms, curls like ink in water, and fades
+     within about a second. Nothing runs while nobody is moving. */
+  function heroInk() {
+    let canvas = $("#hero-canvas");
     const hero = $(".hero");
-    const palette = [[45, 212, 191], [34, 211, 238], [56, 189, 248], [59, 130, 246], [29, 78, 216]];
-    let w = 0, h = 0, pts = [], running = true, lastW = 0, last = 0;
-    const mouse = { x: -9999, y: -9999 };
 
-    // Pre-built colour strings (no string building inside the frame loop)
-    const BUCKETS = 24;
-    const colors = Array.from({ length: BUCKETS }, (_, n) => {
-      const tt = (n / (BUCKETS - 1)) * (palette.length - 1);
-      const i = Math.floor(tt), f = tt - i;
-      const a = palette[i], b = palette[Math.min(i + 1, palette.length - 1)];
-      return `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * f)).join(",")})`;
-    });
-    const colorAt = (x) => colors[Math.max(0, Math.min(BUCKETS - 1, ((x / w) * (BUCKETS - 1)) | 0))];
+    // Preferred: a real fluid simulation on the GPU. Tried on a fresh canvas so a
+    // failed WebGL attempt never blocks the simple canvas version below.
+    if (!reduce && window.RafaqFluid) {
+      const glCanvas = canvas.cloneNode(false);
+      canvas.after(glCanvas);
+      let fluid = null;
+      try { fluid = window.RafaqFluid(glCanvas, { lite }); } catch (e) { fluid = null; }
+      if (fluid) {
+        canvas.remove();
+        const prev = { x: 0, y: 0, t: 0, has: false };
+        const pos = (e) => { const r = glCanvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+        hero.addEventListener("pointermove", (e) => {
+          const [x, y] = pos(e), now = performance.now();
+          if (!prev.has || now - prev.t > 120) { Object.assign(prev, { x, y, t: now, has: true }); return; }
+          const dx = x - prev.x, dy = y - prev.y;
+          if (Math.abs(dx) + Math.abs(dy) < 1) return;
+          fluid.move(x, y, dx, dy);
+          Object.assign(prev, { x, y, t: now });
+        }, { passive: true });
+        hero.addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); prev.has = false; }, { passive: true });
+        hero.addEventListener("pointerleave", () => { prev.has = false; });
+        let inView = true;
+        const sync = () => fluid.setVisible(inView && !document.hidden);
+        new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
+        document.addEventListener("visibilitychange", sync);
+        let rt;
+        addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => fluid.resize(), 150); });
+        // A single drop of ink by the logo once the page has loaded, as a hint
+        setTimeout(() => {
+          const mark = $("#hero-mark"), r = glCanvas.getBoundingClientRect();
+          if (!mark || !r.width) return;
+          const m = mark.getBoundingClientRect();
+          fluid.burst(m.left + m.width / 2 - r.left, m.top + m.height / 2 - r.top);
+        }, 1600);
+        return;
+      }
+      glCanvas.remove();
+    }
 
-    function spawn() {
-      const n = lite ? Math.min(36, Math.floor((w * h) / 30000)) : Math.min(90, Math.floor((w * h) / 16000));
-      pts = Array.from({ length: n }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.6 + 0.6,
-      }));
+    // Fallback: soft canvas ink for devices without the GPU features above
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const BG = [1, 7, 20];                                    // a touch darker than the page
+    const PALETTE = [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179], [1, 65, 136]];
+    const MAX = lite ? 220 : 600;
+    const RES = lite ? 0.35 : 0.5;                            // canvas pixels per CSS pixel
+
+    // A few irregular, cloudy "ink" sprites per colour, built once and reused
+    const sprites = PALETTE.map((c) => Array.from({ length: 3 }, () => {
+      const s = document.createElement("canvas");
+      s.width = s.height = 96;
+      const g = s.getContext("2d");
+      for (let k = 0; k < 9; k++) {
+        const a = Math.random() * Math.PI * 2, d = Math.random() * 18;
+        const x = 48 + Math.cos(a) * d, y = 48 + Math.sin(a) * d, r = 16 + Math.random() * 26;
+        const grd = g.createRadialGradient(x, y, 0, x, y, r);
+        grd.addColorStop(0, `rgba(${c},.34)`);
+        grd.addColorStop(0.5, `rgba(${c},.14)`);
+        grd.addColorStop(1, `rgba(${c},0)`);
+        g.fillStyle = grd;
+        g.fillRect(0, 0, 96, 96);
+      }
+      return s;
+    }));
+
+    let w = 1, h = 1, running = false, visible = true, quiet = 0, last = 0;
+    const drops = [];
+    const prev = { x: 0, y: 0, t: 0, has: false };
+
+    function paintBg() {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = `rgb(${BG})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     function resize() {
-      const dpr = Math.min(devicePixelRatio || 1, lite ? 1 : 1.5);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Mobile browsers fire resize when the address bar hides: only respawn on real width changes
-      if (Math.abs(w - lastW) > 80 || !pts.length) { spawn(); lastW = w; }
+      w = canvas.clientWidth || innerWidth;
+      h = canvas.clientHeight || innerHeight;
+      canvas.width = Math.max(2, Math.round(w * RES));
+      canvas.height = Math.max(2, Math.round(h * RES));
+      paintBg();
     }
 
-    // Measure real performance once; drop to lite mode if the device struggles
-    let probeFrames = 0, probeStart = 0;
-    function probe(now) {
-      if (lite || probeFrames < 0) return;
-      if (!probeStart) probeStart = now;
-      if (++probeFrames === 60) {
-        const fps = 60000 / (now - probeStart);
-        probeFrames = -1;
-        if (fps < 40) {
-          lite = true;
-          root.classList.add("lite");
-          if (lenis) { lenis.destroy(); lenis = null; }
-          resize(); spawn();
-        }
+    // Colour slowly travels along the logo gradient as you move
+    let hue = Math.random() * PALETTE.length;
+    function drop(x, y, vx, vy, big) {
+      if (drops.length >= MAX) drops.shift();
+      hue = (hue + 0.035) % PALETTE.length;
+      const ci = Math.floor((hue + (Math.random() - 0.5) * 0.8 + PALETTE.length) % PALETTE.length);
+      // Spread a little to the side of the stroke so it billows instead of drawing a line
+      const len = Math.hypot(vx, vy) || 1, nx = -vy / len, ny = vx / len;
+      const side = (Math.random() - 0.5) * (big ? 30 : 16);
+      drops.push({
+        x: x + nx * side, y: y + ny * side,
+        vx: vx * 0.1 + nx * side * 0.05 + (Math.random() - 0.5) * 1.2,
+        vy: vy * 0.1 + ny * side * 0.05 + (Math.random() - 0.5) * 1.2,
+        r: (big ? 26 : 12) + Math.random() * (big ? 24 : 12),
+        grow: 2.4 + Math.random() * 2,
+        life: 0,
+        dur: 0.7 + Math.random() * 0.4,                          // seconds: short, so it feels crisp
+        a: 0.18 + Math.random() * 0.14,
+        rot: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 1.2,
+        s: sprites[ci][(Math.random() * 3) | 0],
+        seed: Math.random() * 100,
+      });
+    }
+
+    function step(dt, t) {
+      // Fade what was drawn before: this is what leaves the soft ink trails
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = `rgba(${BG},${Math.min(0.22, 6 * dt)})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.setTransform(RES, 0, 0, RES, 0, 0);
+      ctx.globalCompositeOperation = "screen";            // screen never burns out to white
+      for (let i = drops.length - 1; i >= 0; i--) {
+        const d = drops[i];
+        d.life += dt / d.dur;
+        if (d.life >= 1) { drops.splice(i, 1); continue; }
+        // A gentle swirling current makes the ink curl instead of moving in straight lines
+        const ang = Math.sin(d.x * 0.011 + t * 0.7 + d.seed) * Math.cos(d.y * 0.013 - t * 0.5) * Math.PI * 2;
+        d.vx = d.vx * 0.93 + Math.cos(ang) * 0.35;
+        d.vy = d.vy * 0.93 + Math.sin(ang) * 0.35 - 0.05;       // ink rises a touch, like warm water
+        d.rot += d.spin * dt;
+        d.x += d.vx * dt * 60;
+        d.y += d.vy * dt * 60;
+        const e = 1 - Math.pow(1 - d.life, 3);                   // blooms fast, then settles
+        const r = d.r * (1 + (d.grow - 1) * e);
+        ctx.globalAlpha = d.a * Math.min(1, d.life * 6) * Math.pow(1 - d.life, 1.8);
+        ctx.translate(d.x, d.y); ctx.rotate(d.rot);
+        ctx.drawImage(d.s, -r, -r, r * 2, r * 2);
+        ctx.setTransform(RES, 0, 0, RES, 0, 0);
       }
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
     }
 
     function frame(now) {
       if (!running) return;
-      requestAnimationFrame(frame);
-      probe(now);
-      if (lite && now - last < 33) return; // ~30fps is plenty on weak devices
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
       last = now;
-      ctx.clearRect(0, 0, w, h);
-      for (const p of pts) {
-        const dx = p.x - mouse.x, dy = p.y - mouse.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < 22000) {
-          const f = (1 - d2 / 22000) * 0.6;
-          p.vx += (dx / Math.sqrt(d2 + 1)) * f;
-          p.vy += (dy / Math.sqrt(d2 + 1)) * f;
-        }
-        p.vx *= 0.97; p.vy *= 0.97;
-        p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02;
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
-      }
-      ctx.lineWidth = 0.8;
-      for (let i = 0; i < pts.length; i++) {
-        const a = pts[i];
-        const c = colorAt(a.x);
-        ctx.strokeStyle = c;
-        for (let j = i + 1; j < pts.length; j++) {
-          const b = pts[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 15000) {
-            ctx.globalAlpha = (1 - d2 / 15000) * 0.28;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-        const mx = a.x - mouse.x, my = a.y - mouse.y;
-        const md = mx * mx + my * my;
-        if (md < 40000) {
-          ctx.globalAlpha = (1 - md / 40000) * 0.5;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
-        }
-        ctx.globalAlpha = 0.9;
-        ctx.fillStyle = c;
-        ctx.fillRect(a.x - a.r, a.y - a.r, a.r * 2, a.r * 2);
-      }
-      ctx.globalAlpha = 1;
+      step(dt, now / 1000);
+      // Once the ink has faded, stop completely until the next movement
+      quiet = drops.length ? 0 : quiet + dt;
+      if (quiet > 1.2 || !visible) { running = false; last = 0; paintBg(); return; }
+      requestAnimationFrame(frame);
     }
-    hero.addEventListener("mousemove", (e) => {
+    function wake() {
+      if (running || !visible) return;
+      running = true; quiet = 0;
+      requestAnimationFrame(frame);
+    }
+
+    function move(e) {
       const r = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
-    });
-    hero.addEventListener("mouseleave", () => { mouse.x = mouse.y = -9999; });
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const now = performance.now();
+      if (!prev.has || now - prev.t > 120) { prev.x = x; prev.y = y; prev.t = now; prev.has = true; return; }
+      const dx = x - prev.x, dy = y - prev.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 2) return;
+      // More ink for faster strokes, laid along the path so it stays continuous
+      const n = Math.min(lite ? 4 : 8, Math.ceil(dist / 10));
+      for (let i = 1; i <= n; i++) drop(prev.x + (dx * i) / n, prev.y + (dy * i) / n, dx / n, dy / n, false);
+      prev.x = x; prev.y = y; prev.t = now;
+      wake();
+    }
+    function burst(x, y) {
+      const n = lite ? 8 : 14;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + Math.random() * 0.4;
+        drop(x + Math.cos(a) * 8, y + Math.sin(a) * 8, Math.cos(a) * 18, Math.sin(a) * 18, i % 2 === 0);
+      }
+      wake();
+    }
+
+    hero.addEventListener("pointermove", move, { passive: true });
+    hero.addEventListener("pointerdown", (e) => {
+      const r = canvas.getBoundingClientRect();
+      burst(e.clientX - r.left, e.clientY - r.top);
+      prev.has = false;
+    }, { passive: true });
+    hero.addEventListener("pointerleave", () => { prev.has = false; });
+
     let resizeTimer;
     addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
     resize();
-    // Only animate while the hero is on screen and the tab is visible
+    if (reduce) return; // reduced motion: keep the calm, dark background only
+
     let inView = true;
-    const sync = () => {
-      const was = running;
-      running = inView && !document.hidden;
-      if (running && !was) requestAnimationFrame(frame);
-    };
+    const sync = () => { visible = inView && !document.hidden; };
     new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);
     document.addEventListener("visibilitychange", sync);
-    requestAnimationFrame(frame);
+
+    // A single drop of ink by the logo once the page has loaded, as a hint
+    setTimeout(() => {
+      const mark = $("#hero-mark");
+      const r = canvas.getBoundingClientRect();
+      if (!mark || !r.width) return;
+      const m = mark.getBoundingClientRect();
+      burst(m.left + m.width / 2 - r.left, m.top + m.height / 2 - r.top);
+    }, 1600);
   }
-  if (!reduce) heroCanvas();
+  heroInk();
 
   /* ---------------- AI agent demo ---------------- */
   const agent = (() => {
