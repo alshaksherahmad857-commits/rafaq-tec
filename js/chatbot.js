@@ -235,21 +235,24 @@
   }
 
   /* ---------------- DOM ---------------- */
-  const ROBOT = `
+  // Each copy gets its own gradient ids: a gradient defined inside a hidden element
+  // (the closed panel) would otherwise leave the visible copy without colour.
+  const ROBOT = (id) => `
     <svg class="rb-svg" viewBox="0 0 64 64" aria-hidden="true">
       <defs>
-        <linearGradient id="rbHead" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#54efe4"/><stop offset=".5" stop-color="#09ddec"/><stop offset="1" stop-color="#016cf0"/>
+        <linearGradient id="rbHead-${id}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#09ddec"/><stop offset="1" stop-color="#016cf0"/>
         </linearGradient>
+        <filter id="rbGlow-${id}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-      <line x1="32" y1="6" x2="32" y2="15" stroke="#54efe4" stroke-width="2.5" stroke-linecap="round"/>
-      <circle class="rb-light" cx="32" cy="6" r="3.6" fill="#54efe4"/>
-      <rect x="4" y="27" width="6" height="14" rx="3" fill="#015fb3"/>
-      <rect x="54" y="27" width="6" height="14" rx="3" fill="#015fb3"/>
-      <rect x="9" y="15" width="46" height="38" rx="14" fill="url(#rbHead)"/>
-      <rect x="15" y="23" width="34" height="20" rx="10" fill="#010c21"/>
-      <g class="rb-eyes"><rect x="22" y="29" width="6" height="8" rx="3" fill="#54efe4"/><rect x="36" y="29" width="6" height="8" rx="3" fill="#54efe4"/></g>
-      <path d="M27 47.5q5 3 10 0" stroke="#010c21" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <line x1="32" y1="7" x2="32" y2="15" stroke="#016cf0" stroke-width="2.6" stroke-linecap="round"/>
+      <circle class="rb-light" cx="32" cy="6" r="3.8" fill="#54efe4" filter="url(#rbGlow-${id})"/>
+      <rect x="4.5" y="27" width="6" height="14" rx="3" fill="#016cf0"/>
+      <rect x="53.5" y="27" width="6" height="14" rx="3" fill="#016cf0"/>
+      <rect x="9" y="15" width="46" height="38" rx="14" fill="url(#rbHead-${id})"/>
+      <rect x="15" y="22" width="34" height="19" rx="9.5" fill="#011940"/>
+      <g class="rb-eyes" filter="url(#rbGlow-${id})"><ellipse cx="25" cy="31.5" rx="3.6" ry="4.4" fill="#54efe4"/><ellipse cx="39" cy="31.5" rx="3.6" ry="4.4" fill="#54efe4"/></g>
+      <path d="M27 46q5 3.4 10 0" stroke="#011940" stroke-width="2.6" fill="none" stroke-linecap="round"/>
     </svg>`;
 
   const wrap = document.createElement("div");
@@ -258,7 +261,7 @@
     <div class="rb-teaser" hidden><span class="rb-teaser-text"></span><button type="button" class="rb-teaser-x" aria-label="Dismiss">×</button></div>
     <section class="rb-panel" id="rb-panel" role="dialog" aria-modal="false" aria-labelledby="rb-name" hidden>
       <header class="rb-head">
-        <span class="rb-avatar">${ROBOT}</span>
+        <span class="rb-avatar">${ROBOT("head")}</span>
         <div class="rb-meta"><b id="rb-name"></b><span class="rb-status"><i></i><span class="rb-status-text"></span></span></div>
         <button type="button" class="rb-close" aria-label="Close">
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -272,7 +275,8 @@
       </form>
     </section>
     <button type="button" class="rb-fab" aria-controls="rb-panel" aria-expanded="false">
-      <span class="rb-bot">${ROBOT}</span>
+      <span class="rb-bot">${ROBOT("fab")}</span>
+      <span class="rb-x" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
       <span class="rb-ping" aria-hidden="true"></span>
     </button>`;
   document.body.appendChild(wrap);

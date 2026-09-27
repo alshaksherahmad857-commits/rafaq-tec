@@ -202,18 +202,10 @@
       try { fluid = window.RafaqFluid(glCanvas, { lite }); } catch (e) { fluid = null; }
       if (fluid) {
         canvas.remove();
-        const prev = { x: 0, y: 0, t: 0, has: false };
         const pos = (e) => { const r = glCanvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-        hero.addEventListener("pointermove", (e) => {
-          const [x, y] = pos(e), now = performance.now();
-          if (!prev.has || now - prev.t > 120) { Object.assign(prev, { x, y, t: now, has: true }); return; }
-          const dx = x - prev.x, dy = y - prev.y;
-          if (Math.abs(dx) + Math.abs(dy) < 1) return;
-          fluid.move(x, y, dx, dy);
-          Object.assign(prev, { x, y, t: now });
-        }, { passive: true });
-        hero.addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); prev.has = false; }, { passive: true });
-        hero.addEventListener("pointerleave", () => { prev.has = false; });
+        hero.addEventListener("pointermove", (e) => { const [x, y] = pos(e); fluid.move(x, y); }, { passive: true });
+        hero.addEventListener("pointerdown", (e) => { const [x, y] = pos(e); fluid.burst(x, y); fluid.move(x, y); }, { passive: true });
+        hero.addEventListener("pointerleave", () => fluid.leave());
         let inView = true;
         const sync = () => fluid.setVisible(inView && !document.hidden);
         new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }).observe(hero);

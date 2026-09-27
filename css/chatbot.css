@@ -13,29 +13,29 @@
 .rb [hidden] { display: none !important; }
 
 /* ---------- Floating robot button ---------- */
-@property --rb-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 .rb-fab {
-  position: relative; width: 72px; height: 72px; padding: 0; border: 3px solid transparent; border-radius: 50%;
-  /* White core with a slowly turning ring in the brand colors */
+  position: relative; width: 76px; height: 76px; padding: 0; border: 5px solid transparent; border-radius: 50%;
+  /* White core inside a thick ring that runs from blue to cyan and mint */
   background:
-    radial-gradient(circle at 34% 28%, #ffffff 0%, #effdfe 55%, #c8f4f8 100%) padding-box,
-    conic-gradient(from var(--rb-a), #54efe4, #09ddec, #016cf0, #015fb3, #54efe4) border-box;
-  box-shadow: 0 0 0 5px rgba(84, 239, 228, .14), 0 14px 38px -6px rgba(9, 221, 236, .75), 0 0 60px -10px rgba(1, 108, 240, .7);
+    radial-gradient(circle at 38% 30%, #ffffff 0%, #f4feff 60%, #dcf8fb 100%) padding-box,
+    linear-gradient(140deg, #016cf0 0%, #09ddec 55%, #54efe4 100%) border-box;
+  box-shadow: 0 0 0 6px rgba(84, 239, 228, .10), 0 0 36px 6px rgba(9, 221, 236, .38), 0 12px 30px -10px rgba(1, 108, 240, .7);
   cursor: pointer; display: grid; place-items: center; transition: transform .35s var(--ease, ease), box-shadow .35s;
-  animation: rb-spin 7s linear infinite;
 }
-.rb-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 0 7px rgba(84, 239, 228, .2), 0 18px 46px -6px rgba(9, 221, 236, .9), 0 0 80px -10px rgba(1, 108, 240, .85); }
-@keyframes rb-spin { to { --rb-a: 360deg; } }
+.rb-fab:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 0 0 8px rgba(84, 239, 228, .14), 0 0 48px 8px rgba(9, 221, 236, .5), 0 16px 36px -10px rgba(1, 108, 240, .8); }
+.rb-x { display: none; width: 26px; height: 26px; color: #015fb3; }
+.rb-x svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+.rb.is-open .rb-x { display: block; }
+.rb.is-open .rb-bot { display: none; }
 .rb-fab:focus-visible, .rb button:focus-visible, .rb-input:focus-visible { outline: 2px solid var(--rb-mint); outline-offset: 3px; }
-.rb-bot { width: 52px; height: 52px; display: block; animation: rb-float 3.6s ease-in-out infinite; }
+.rb-bot { width: 54px; height: 54px; display: block; animation: rb-float 4.8s ease-in-out infinite; }
 .rb-svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .rb-eyes { transform-origin: 32px 33px; animation: rb-blink 5s infinite; }
 .rb-light { animation: rb-glow 2.2s ease-in-out infinite; }
 .rb-ping { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--rb-mint); opacity: 0; animation: rb-ping 3.2s ease-out infinite; pointer-events: none; }
 .rb.is-open .rb-ping { display: none; }
-.rb.is-open .rb-bot { animation: none; }
 
-@keyframes rb-float { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+@keyframes rb-float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-3px) rotate(2deg); } }
 @keyframes rb-blink { 0%, 44%, 48%, 100% { transform: scaleY(1); } 46% { transform: scaleY(.1); } }
 @keyframes rb-glow { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 @keyframes rb-ping { 0% { transform: scale(.9); opacity: .7; } 70%, 100% { transform: scale(1.35); opacity: 0; } }
@@ -120,8 +120,8 @@
 @media (max-width: 520px) {
   .rb { right: 14px; bottom: 14px; }
   .rb[dir="rtl"] { left: 14px; }
-  .rb-fab { width: 62px; height: 62px; }
-  .rb-bot { width: 44px; height: 44px; }
+  .rb-fab { width: 66px; height: 66px; border-width: 4px; }
+  .rb-bot { width: 46px; height: 46px; }
   .rb-panel { width: calc(100vw - 28px); height: calc(100vh - 110px); height: calc(100dvh - 110px); }
 }
 

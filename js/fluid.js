@@ -10,12 +10,12 @@ window.RafaqFluid = function (canvas, opts) {
   const o = Object.assign({
     lite: false,
     simRes: 128,
-    dyeRes: 640,
+    dyeRes: 900,
     dyeFade: 3.4,          // higher = shorter trail
     velFade: 1.1,
     pressure: 0.8,
     pressureIters: 20,
-    curl: 26,              // swirl strength: the marbled curls
+    curl: 22,              // swirl strength: the marbled curls
     radius: 0.12,          // splat size (percent of screen)
     force: 5200,
     bright: 0.22,          // ink brightness (kept low so text stays readable)
@@ -344,12 +344,33 @@ window.RafaqFluid = function (canvas, opts) {
 
   // Colour travels slowly along the logo gradient while you move
   let hue = Math.random() * o.palette.length;
-  function nextColor() {
-    hue = (hue + 0.07) % o.palette.length;
+  function nextColor(stepSize = 0.07) {
+    hue = (hue + stepSize) % o.palette.length;
     const i = Math.floor(hue), f = hue - i;
     const a = o.palette[i], b = o.palette[(i + 1) % o.palette.length];
     const k = o.bright / 255;
     return [0, 1, 2].map((j) => (a[j] + (b[j] - a[j]) * f) * k);
+  }
+
+  // ---------- Pointer smoothing ----------
+  // The ink follows an eased copy of the pointer and is laid down every frame in
+  // small steps, so strokes come out as smooth curves instead of dotted jumps.
+  const ptr = { tx: 0, ty: 0, x: 0, y: 0, on: false };
+  function flow(dt) {
+    if (!ptr.on) return false;
+    const k = 1 - Math.pow(1e-7, dt);                   // about 22% of the way each frame at 60fps
+    const nx = ptr.x + (ptr.tx - ptr.x) * k, ny = ptr.y + (ptr.ty - ptr.y) * k;
+    const dx = nx - ptr.x, dy = ny - ptr.y, dist = Math.hypot(dx, dy);
+    if (dist < 0.25) return false;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    const n = Math.min(10, Math.max(1, Math.ceil(dist / 6)));
+    for (let i = 1; i <= n; i++) {
+      const px = ptr.x + (dx * i) / n, py = ptr.y + (dy * i) / n;
+      const c = nextColor(0.07 / n).map((v) => v / Math.sqrt(n));
+      splatRaw(px / w, 1 - py / h, ((dx / n) / w) * o.force * 1.6, ((-dy / n) / h) * o.force * 1.6, c);
+    }
+    ptr.x = nx; ptr.y = ny;
+    return true;
   }
 
   // ---------- Loop ----------
@@ -360,6 +381,7 @@ window.RafaqFluid = function (canvas, opts) {
     const dt = Math.min(0.033, lastT ? (now - lastT) / 1000 : 0.016);
     lastT = now;
     if (sizeCanvas()) { try { initTargets(); } catch (e) { running = false; return; } }
+    if (flow(dt)) lastInput = now;
     step(dt);
     render();
     if (!visible || now - lastInput > IDLE * 1000) { running = false; lastT = 0; return; }
@@ -375,12 +397,13 @@ window.RafaqFluid = function (canvas, opts) {
   render();
 
   return {
-    // x, y in CSS pixels relative to the canvas; dx, dy movement in CSS pixels
-    move(x, y, dx, dy) {
-      const w = canvas.clientWidth, h = canvas.clientHeight;
-      splatRaw(x / w, 1 - y / h, (dx / w) * o.force, (-dy / h) * o.force, nextColor());
+    // x, y in CSS pixels relative to the canvas
+    move(x, y) {
+      if (!ptr.on) { ptr.x = x; ptr.y = y; ptr.on = true; }
+      ptr.tx = x; ptr.ty = y;
       wake();
     },
+    leave() { ptr.on = false; },
     burst(x, y) {
       const w = canvas.clientWidth, h = canvas.clientHeight;
       for (let i = 0; i < 5; i++) {
