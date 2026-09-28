@@ -171,7 +171,6 @@
   const UI = {
     en: {
       name: "Rafaq Assistant",
-      status: "Instant answers · a real person follows up",
       teaser: "Hi! Got a question? I can help.",
       welcome: "Hi, I'm the Rafaq assistant. 👋 I can tell you about our services, pricing, timelines and how we work. What's on your mind?",
       placeholder: "Type your question…",
@@ -184,7 +183,6 @@
     },
     ar: {
       name: "مساعد رفاق",
-      status: "إجابات فورية · ويتابع معك شخص حقيقي",
       teaser: "أهلاً! عندك سؤال؟ أقدر أساعدك.",
       welcome: "أهلاً، أنا مساعد رفاق. 👋 أقدر أخبرك عن خدماتنا والأسعار والمدة وطريقة عملنا. بماذا تفكر؟",
       placeholder: "اكتب سؤالك…",
@@ -261,8 +259,7 @@
     <div class="rb-teaser" hidden><span class="rb-teaser-text"></span><button type="button" class="rb-teaser-x" aria-label="Dismiss">×</button></div>
     <section class="rb-panel" id="rb-panel" role="dialog" aria-modal="false" aria-labelledby="rb-name" hidden>
       <header class="rb-head">
-        <span class="rb-avatar">${ROBOT("head")}</span>
-        <div class="rb-meta"><b id="rb-name"></b><span class="rb-status"><i></i><span class="rb-status-text"></span></span></div>
+        <div class="rb-meta"><b id="rb-name"></b></div>
         <button type="button" class="rb-close" aria-label="Close">
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
@@ -289,7 +286,6 @@
 
   function paintChrome() {
     $("#rb-name").textContent = ui("name");
-    $(".rb-status-text").textContent = ui("status");
     $(".rb-teaser-text").textContent = ui("teaser");
     input.placeholder = ui("placeholder");
     input.setAttribute("aria-label", ui("placeholder"));

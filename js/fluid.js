@@ -404,7 +404,7 @@ window.RafaqFluid = function (canvas, opts) {
     requestAnimationFrame(frame);
   }
 
-  if (o.light) o.bg = o.pageBg = [243 / 255, 247 / 255, 252 / 255];
+  if (o.light) o.bg = o.pageBg = [231 / 255, 237 / 255, 244 / 255];
   render();
 
   return {
@@ -426,7 +426,7 @@ window.RafaqFluid = function (canvas, opts) {
     },
     setTheme(isLight) {
       o.light = !!isLight;
-      o.bg = o.pageBg = isLight ? [243 / 255, 247 / 255, 252 / 255] : [1 / 255, 7 / 255, 20 / 255];
+      o.bg = o.pageBg = isLight ? [231 / 255, 237 / 255, 244 / 255] : [1 / 255, 7 / 255, 20 / 255];
       render();
     },
     setVisible(v) { visible = v; if (!v) running = false; },

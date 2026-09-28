@@ -72,7 +72,7 @@
     root.setAttribute("data-theme", next);
     if (save) { try { localStorage.setItem("rafaq-theme", next); } catch (e) {} }
     themeBtn.setAttribute("aria-label", next === "light" ? "Switch to dark mode" : "Switch to light mode");
-    if (themeMeta) themeMeta.setAttribute("content", next === "light" ? "#f3f7fc" : "#010714");
+    if (themeMeta) themeMeta.setAttribute("content", next === "light" ? "#e7edf4" : "#010714");
     window.dispatchEvent(new CustomEvent("rafaq:theme", { detail: next }));
   }
   themeBtn.addEventListener("click", () => applyTheme(theme() === "light" ? "dark" : "light", true));
@@ -229,7 +229,7 @@
         addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => fluid.resize(), 150); });
         // A single drop of ink by the logo once the page has loaded, as a hint
         setTimeout(() => {
-          const mark = $("#hero-mark"), r = glCanvas.getBoundingClientRect();
+          const mark = $("#hero-visual"), r = glCanvas.getBoundingClientRect();
           if (!mark || !r.width) return;
           const m = mark.getBoundingClientRect();
           fluid.burst(m.left + m.width / 2 - r.left, m.top + m.height / 2 - r.top);
@@ -245,7 +245,7 @@
     let blend = "screen";
     const setThemeColors = () => {
       const light = root.getAttribute("data-theme") === "light";
-      BG = light ? [243, 247, 252] : [1, 7, 20];
+      BG = light ? [231, 237, 244] : [1, 7, 20];
       blend = light ? "source-over" : "screen";           // on a pale page ink darkens instead of glowing
     };
     setThemeColors();
@@ -404,7 +404,7 @@
 
     // A single drop of ink by the logo once the page has loaded, as a hint
     setTimeout(() => {
-      const mark = $("#hero-mark");
+      const mark = $("#hero-visual");
       const r = canvas.getBoundingClientRect();
       if (!mark || !r.width) return;
       const m = mark.getBoundingClientRect();
@@ -412,6 +412,12 @@
     }, 1600);
   }
   heroInk();
+
+  // Hero centerpiece: particles that rebuild themselves into each thing we make
+  const morphCanvas = $("#morph-canvas");
+  if (morphCanvas && window.RafaqMorph) {
+    try { window.RafaqMorph(morphCanvas, $(".morph-caption"), { lite, reduce }); } catch (e) { /* the page works without it */ }
+  }
 
   /* ---------------- Work cards -> contact ---------------- */
   $$(".work-card").forEach((card) => {
@@ -532,24 +538,11 @@
     tl.from(".hero-title .line > span", { yPercent: 115, rotate: 3, duration: 1.4, stagger: 0.12 })
       .to(".intro-fade", { opacity: 1, duration: 1.2, stagger: 0.12 }, 0.35)
       .from(".intro-fade", { y: 26, duration: 1.2, stagger: 0.12 }, 0.35)
-      .from(".hero-visual", { scale: 0.5, opacity: 0, rotate: -25, duration: 1.8 }, 0)
-      .from(".float-chip", { opacity: 0, duration: 0.8, stagger: 0.1 }, 0.8)
+      .from(".hero-visual", { scale: 0.7, opacity: 0, duration: 1.8 }, 0)
       .from(".nav", { opacity: 0, duration: 1 }, 0.2);
   }
 
   function scrollMotion() {
-    // Logo mark: a gentle breathing scale
-    gsap.to("#hero-mark", { scale: 1.035, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true });
-
-    // 3D tilt of the logo following the mouse
-    const mark = $("#hero-mark");
-    $(".hero").addEventListener("mousemove", (e) => {
-      const nx = e.clientX / innerWidth - 0.5;
-      const ny = e.clientY / innerHeight - 0.5;
-      gsap.to(mark, { rotateY: nx * 30, rotateX: -ny * 30, x: nx * 20, y: ny * 20, transformPerspective: 800, duration: 1, ease: "power3.out" });
-      gsap.to(".float-chip", { x: nx * -30, y: ny * -30, duration: 1.2, ease: "power3.out", stagger: 0.02 });
-    });
-
     // Hero parallax out
     gsap.to(".hero-copy", { yPercent: -18, opacity: 0.2, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
     gsap.to(".hero-visual", { yPercent: 25, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
