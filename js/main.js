@@ -72,7 +72,7 @@
     root.setAttribute("data-theme", next);
     if (save) { try { localStorage.setItem("rafaq-theme", next); } catch (e) {} }
     themeBtn.setAttribute("aria-label", next === "light" ? "Switch to dark mode" : "Switch to light mode");
-    if (themeMeta) themeMeta.setAttribute("content", next === "light" ? "#e7edf4" : "#010714");
+    if (themeMeta) themeMeta.setAttribute("content", next === "light" ? "#e8f0fa" : "#010714");
     window.dispatchEvent(new CustomEvent("rafaq:theme", { detail: next }));
   }
   themeBtn.addEventListener("click", () => applyTheme(theme() === "light" ? "dark" : "light", true));
@@ -245,7 +245,7 @@
     let blend = "screen";
     const setThemeColors = () => {
       const light = root.getAttribute("data-theme") === "light";
-      BG = light ? [231, 237, 244] : [1, 7, 20];
+      BG = light ? [232, 240, 250] : [1, 7, 20];
       blend = light ? "source-over" : "screen";           // on a pale page ink darkens instead of glowing
     };
     setThemeColors();
@@ -413,11 +413,6 @@
   }
   heroInk();
 
-  // Hero centerpiece: particles that rebuild themselves into each thing we make
-  const morphCanvas = $("#morph-canvas");
-  if (morphCanvas && window.RafaqMorph) {
-    try { window.RafaqMorph(morphCanvas, $(".morph-caption"), { lite, reduce }); } catch (e) { /* the page works without it */ }
-  }
 
   /* ---------------- Work cards -> contact ---------------- */
   $$(".work-card").forEach((card) => {

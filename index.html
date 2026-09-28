@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rafaq Tec — Stronger Together</title>
-  <meta name="description" content="Rafaq Tec is a digital studio for UI/UX design, web development, mobile apps and AI agents.">
+  <meta name="description" content="Rafaq Tec builds full stack websites, mobile apps, AI and machine learning, data science and UI/UX design.">
   <meta name="theme-color" content="#010714">
   <meta property="og:title" content="Rafaq Tec — Stronger Together">
-  <meta property="og:description" content="UI/UX design, web & mobile development, and AI agents.">
+  <meta property="og:description" content="Web and mobile development, AI engineering, data science and UI/UX design.">
   <meta property="og:image" content="https://rafaqtec.com/assets/logo-banner.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rafaqtec.com/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rafaq Tec — Stronger Together">
-  <meta name="twitter:description" content="UI/UX design, web & mobile development, and AI agents.">
+  <meta name="twitter:description" content="Web and mobile development, AI engineering, data science and UI/UX design.">
   <meta name="twitter:image" content="https://rafaqtec.com/assets/logo-banner.png">
   <link rel="canonical" href="https://rafaqtec.com/">
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -30,7 +30,7 @@
       document.documentElement.setAttribute("data-theme", t);
     })();
   </script>
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <link rel="stylesheet" href="css/chatbot.css?v=6">
 </head>
 <body>
@@ -95,30 +95,58 @@
             <span class="line"><span class="grad-text" data-i18n="hero.l2">digital products</span></span>
             <span class="line"><span data-i18n="hero.l3">that feel alive.</span></span>
           </h1>
-          <p class="hero-sub intro-fade" data-i18n="hero.sub">Rafaq Tec designs and builds digital products end to end — interfaces, web and mobile apps, and the AI agents running behind them. One team, no handoffs, from the first sketch to what people actually use.</p>
+          <p class="hero-sub intro-fade" data-i18n="hero.sub">Rafaq Tec designs and builds digital products end to end — interfaces, web and mobile apps, and the AI and data science behind them. One team, no handoffs, from the first sketch to what people actually use.</p>
           <div class="hero-actions intro-fade">
             <a href="#contact" class="btn btn-primary magnetic"><span data-i18n="hero.cta1">Start your project</span><svg class="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <a href="#services" class="btn btn-ghost magnetic" data-i18n="hero.cta2">Our services</a>
           </div>
         </div>
 
-        <div class="hero-visual" id="hero-visual">
-          <canvas class="morph-canvas" id="morph-canvas" aria-hidden="true"></canvas>
-          <p class="morph-caption" aria-live="polite"><span class="mc-num">01</span><span class="mc-name">Web platforms</span></p>
+        <div class="hero-visual cx" id="hero-visual">
+          <svg class="cx-svg" viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="cx-orbit" cx="50" cy="50" r="35"/>
+            <circle class="cx-orbit cx-orbit-2" cx="50" cy="50" r="24"/>
+            <polygon class="cx-web" points="50,7 90,37 80,88 20,88 10,37"/>
+            <line class="cx-link" x1="50" y1="50" x2="50" y2="7" style="--d:0.0s"/><line class="cx-link" x1="50" y1="50" x2="90" y2="37" style="--d:0.6s"/><line class="cx-link" x1="50" y1="50" x2="80" y2="88" style="--d:1.2s"/><line class="cx-link" x1="50" y1="50" x2="20" y2="88" style="--d:1.7999999999999998s"/><line class="cx-link" x1="50" y1="50" x2="10" y2="37" style="--d:2.4s"/>
+            <circle class="cx-pulse" r="0.9"><animateMotion dur="3s" begin="0.0s" repeatCount="indefinite" path="M50 50 L50 7"/></circle><circle class="cx-pulse" r="0.9"><animateMotion dur="3s" begin="0.6s" repeatCount="indefinite" path="M50 50 L90 37"/></circle><circle class="cx-pulse" r="0.9"><animateMotion dur="3s" begin="1.2s" repeatCount="indefinite" path="M50 50 L80 88"/></circle><circle class="cx-pulse" r="0.9"><animateMotion dur="3s" begin="1.7999999999999998s" repeatCount="indefinite" path="M50 50 L20 88"/></circle><circle class="cx-pulse" r="0.9"><animateMotion dur="3s" begin="2.4s" repeatCount="indefinite" path="M50 50 L10 37"/></circle>
+          </svg>
+          <div class="cx-core">
+            <span class="cx-core-ring" aria-hidden="true"></span>
+            <b>5</b>
+            <span data-i18n="cx.core">crafts, one team</span>
+          </div>
+          <a class="cx-node" href="#services" style="--x:50%;--y:7%;--i:0">
+            <span class="cx-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg></span>
+            <span class="cx-txt"><b data-i18n="cx.web">Web development</b><small data-i18n="cx.web.s">Full stack sites &amp; apps</small></span>
+          </a>
+          <a class="cx-node" href="#services" style="--x:90%;--y:37%;--i:1">
+            <span class="cx-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span>
+            <span class="cx-txt"><b data-i18n="cx.mobile">Mobile apps</b><small data-i18n="cx.mobile.s">iOS &amp; Android</small></span>
+          </a>
+          <a class="cx-node" href="#services" style="--x:80%;--y:88%;--i:2">
+            <span class="cx-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M10 10h4v4h-4zM9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg></span>
+            <span class="cx-txt"><b data-i18n="cx.ai">AI engineering</b><small data-i18n="cx.ai.s">ML models &amp; chatbots</small></span>
+          </a>
+          <a class="cx-node" href="#services" style="--x:20%;--y:88%;--i:3">
+            <span class="cx-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+            <span class="cx-txt"><b data-i18n="cx.data">Data science</b><small data-i18n="cx.data.s">Insights &amp; forecasts</small></span>
+          </a>
+          <a class="cx-node" href="#services" style="--x:10%;--y:37%;--i:4">
+            <span class="cx-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20l-8-8 3-7h10l3 7-8 8zM12 20V11M9 8h6"/><circle cx="12" cy="11" r="1.5"/></svg></span>
+            <span class="cx-txt"><b data-i18n="cx.ux">UI/UX design</b><small data-i18n="cx.ux.s">Design &amp; consultation</small></span>
+          </a>
         </div>
       </div>
-
-      <a href="#services" class="scroll-cue intro-fade" aria-label="Scroll down"><span data-i18n="hero.scroll">Scroll</span><i></i></a>
     </section>
 
     <!-- ============ MARQUEE ============ -->
     <section class="marquee" aria-hidden="true">
       <div class="marquee-track">
         <div class="marquee-group">
-          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Agents</span><b>✦</b><span>Stronger Together</span><b>✦</b>
+          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Engineering</span><b>✦</b><span>Data Science</span><b>✦</b><span>Stronger Together</span><b>✦</b>
         </div>
         <div class="marquee-group">
-          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Agents</span><b>✦</b><span>Stronger Together</span><b>✦</b>
+          <span>UI/UX Design</span><b>✦</b><span>Web Development</span><b>✦</b><span>Mobile Apps</span><b>✦</b><span>AI Engineering</span><b>✦</b><span>Data Science</span><b>✦</b><span>Stronger Together</span><b>✦</b>
         </div>
       </div>
     </section>
@@ -171,9 +199,9 @@
             <div class="svc-top"><span class="svc-num">04</span>
               <svg class="svc-icon" viewBox="0 0 48 48"><rect x="10" y="14" width="28" height="22" rx="6"/><circle cx="19" cy="25" r="2.5"/><circle cx="29" cy="25" r="2.5"/><path d="M24 14V8M20 8h8M5 22v6M43 22v6M19 31h10"/></svg>
             </div>
-            <h3 data-i18n="svc.4.t">AI Agents</h3>
-            <p data-i18n="svc.4.d">Custom AI agents and agentic interfaces that automate work, talk to your tools and make your product think.</p>
-            <ul class="tags"><li>LLM Agents</li><li>Automation</li><li>Chat UI</li><li>Integrations</li></ul>
+            <h3 data-i18n="svc.4.t">AI &amp; Data Science</h3>
+            <p data-i18n="svc.4.d">We build the AI itself: machine learning models, chatbots trained on your data, and data science that turns numbers into decisions.</p>
+            <ul class="tags"><li>Machine Learning</li><li>Data Science</li><li>Chatbots</li><li>Python</li></ul>
             <span class="svc-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg></span>
           </article>
         </div>
@@ -261,7 +289,7 @@
             <div class="work-visual v3">
               <div class="mock-chat"><i class="mc-in"></i><i class="mc-out"></i><i class="mc-in s"></i><i class="mc-out l"></i></div>
             </div>
-            <div class="work-meta"><div><h3>Atlas AI</h3><p data-i18n="work.3">Customer support agent</p></div><span class="work-tags">AI Agent</span></div>
+            <div class="work-meta"><div><h3>Atlas AI</h3><p data-i18n="work.3">Customer support chatbot</p></div><span class="work-tags">AI · Machine Learning</span></div>
           </a>
           <a class="work-card reveal" data-cursor="View">
             <div class="work-visual v4">
@@ -286,7 +314,7 @@
             <figcaption><span class="avatar a1">S</span><div><b>Sara K.</b><span data-i18n="tst.1r">Founder, health startup</span></div></figcaption>
           </figure>
           <figure class="tst reveal">
-            <blockquote data-i18n="tst.2">“Their AI agent now handles most of our support tickets. It felt like adding a whole team overnight.”</blockquote>
+            <blockquote data-i18n="tst.2">“The chatbot they built now handles most of our support tickets. It felt like adding a whole team overnight.”</blockquote>
             <figcaption><span class="avatar a2">O</span><div><b>Omar H.</b><span data-i18n="tst.2r">COO, e-commerce brand</span></div></figcaption>
           </figure>
           <figure class="tst reveal">
@@ -315,7 +343,7 @@
             <label><input type="checkbox" name="svc" value="uiux"><span data-i18n="svc.1.t">UI/UX Design</span></label>
             <label><input type="checkbox" name="svc" value="web"><span data-i18n="svc.2.t">Web Development</span></label>
             <label><input type="checkbox" name="svc" value="mobile"><span data-i18n="svc.3.t">Mobile Development</span></label>
-            <label><input type="checkbox" name="svc" value="ai"><span data-i18n="svc.4.t">AI Agents</span></label>
+            <label><input type="checkbox" name="svc" value="ai"><span data-i18n="svc.4.t">AI &amp; Data Science</span></label>
           </div>
           <div class="field"><textarea id="f-msg" name="message" rows="4" required placeholder=" "></textarea><label for="f-msg" data-i18n="ct.msg">Tell us about your project</label></div>
           <button type="submit" class="btn btn-primary btn-block magnetic"><span data-i18n="ct.send">Send message</span><svg class="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -348,10 +376,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="js/i18n.js?v=4"></script>
-  <script src="js/fluid.js?v=10"></script>
-  <script src="js/morph.js?v=1"></script>
-  <script src="js/main.js?v=15"></script>
-  <script src="js/chatbot.js?v=6"></script>
+  <script src="js/i18n.js?v=5"></script>
+  <script src="js/fluid.js?v=11"></script>
+  <script src="js/main.js?v=16"></script>
+  <script src="js/chatbot.js?v=7"></script>
 </body>
 </html>

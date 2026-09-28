@@ -2,7 +2,6 @@
 window.RAFAQ_I18N = {
   ar: {
     "nav.services": "خدماتنا",
-    "nav.ai": "وكلاء الذكاء الاصطناعي",
     "nav.process": "طريقة عملنا",
     "nav.work": "أعمالنا",
     "nav.contact": "تواصل معنا",
@@ -13,7 +12,18 @@ window.RAFAQ_I18N = {
     "hero.l1": "نصمّم ونبني",
     "hero.l2": "منتجات رقمية",
     "hero.l3": "تنبض بالحياة.",
-    "hero.sub": "رفاق تك تصمّم وتبني المنتجات الرقمية من الفكرة إلى الإطلاق: واجهات، مواقع وتطبيقات جوال، ووكلاء الذكاء الاصطناعي التي تعمل خلفها. فريق واحد بلا تسليم بين أقسام، من أول رسمة إلى ما يستخدمه الناس فعلًا.",
+    "hero.sub": "رفاق تك تصمّم وتبني المنتجات الرقمية من الفكرة إلى الإطلاق: واجهات، مواقع وتطبيقات جوال، والذكاء الاصطناعي وعلم البيانات خلفها. فريق واحد بلا تسليم بين أقسام، من أول رسمة إلى ما يستخدمه الناس فعلًا.",
+    "cx.core": "تخصصات، فريق واحد",
+    "cx.web": "تطوير المواقع",
+    "cx.web.s": "مواقع وتطبيقات متكاملة",
+    "cx.mobile": "تطبيقات الجوال",
+    "cx.mobile.s": "iOS و Android",
+    "cx.ai": "هندسة الذكاء الاصطناعي",
+    "cx.ai.s": "نماذج تعلّم آلي وشات بوت",
+    "cx.data": "علم البيانات",
+    "cx.data.s": "تحليلات وتوقعات",
+    "cx.ux": "تصميم UI/UX",
+    "cx.ux.s": "تصميم واستشارات",
     "hero.cta1": "ابدأ مشروعك",
     "hero.cta2": "خدماتنا",
     "hero.scroll": "مرّر",
@@ -27,18 +37,8 @@ window.RAFAQ_I18N = {
     "svc.2.d": "مواقع وتطبيقات ويب سريعة وآمنة وقابلة للتوسع، مبنية بأحدث التقنيات مع اهتمام كبير بالأداء.",
     "svc.3.t": "تطوير تطبيقات الجوال",
     "svc.3.d": "تطبيقات iOS و Android بإحساس أصلي، وحركة سلسة، ودعم العمل دون اتصال، ولمسات يلاحظها المستخدم.",
-    "svc.4.t": "وكلاء الذكاء الاصطناعي",
-    "svc.4.d": "وكلاء ذكاء اصطناعي وواجهات ذكية مخصصة تؤتمت العمل، وتتصل بأدواتك، وتجعل منتجك يفكّر.",
-
-    "ai.eyebrow": "وكلاء الذكاء الاصطناعي والواجهات الذكية",
-    "ai.title": "برمجيات <span class=\"grad-text\">تفكّر</span> وتعمل عنك.",
-    "ai.sub": "نصمّم ونطوّر وكلاء ذكاء اصطناعي يتصلون ببياناتك وأدواتك، مع واجهات تجعل التعامل معهم طبيعيًا.",
-    "ai.f1.t": "أتمتة سير العمل",
-    "ai.f1.d": "وكلاء ينجزون المهام المتكررة عبر أنظمة العملاء والبريد وقواعد البيانات.",
-    "ai.f2.t": "واجهات محادثة",
-    "ai.f2.d": "تجارب دردشة وصوت مصممة بنفس العناية التي نمنحها لأي واجهة رائعة.",
-    "ai.f3.t": "تكامل عميق",
-    "ai.f3.d": "اتصال آمن بواجهاتك البرمجية ومستنداتك وأنظمتك الداخلية.",
+    "svc.4.t": "الذكاء الاصطناعي وعلم البيانات",
+    "svc.4.d": "نبني الذكاء الاصطناعي بأنفسنا: نماذج تعلّم آلي، وشات بوت يتعلّم من بياناتك، وعلم بيانات يحوّل الأرقام إلى قرارات.",
 
     "proc.eyebrow": "كيف نعمل",
     "proc.title": "من الفكرة إلى <span class=\"grad-text\">الأثر</span>.",
@@ -63,7 +63,7 @@ window.RAFAQ_I18N = {
     "work.cta": "عندك مشروع؟",
     "work.1": "تطبيق لمتابعة الصحة",
     "work.2": "منصة تجارة إلكترونية",
-    "work.3": "وكيل ذكي لخدمة العملاء",
+    "work.3": "شات بوت لخدمة العملاء",
     "work.4": "لوحة تحكم مالية",
 
     "stack.label": "الأدوات والتقنيات التي نتقنها",
@@ -72,7 +72,7 @@ window.RAFAQ_I18N = {
     "tst.title": "شركاء، <span class=\"grad-text\">لا مجرد مزوّدين</span>.",
     "tst.1": "«أعاد فريق رفاق تك تصميم تطبيقنا من الصفر، وتضاعف التفاعل خلال شهرين من الإطلاق.»",
     "tst.1r": "مؤسِّسة، شركة ناشئة في الصحة",
-    "tst.2": "«الوكيل الذكي الذي بنوه يتولى معظم تذاكر الدعم لدينا. كأننا أضفنا فريقًا كاملًا بين ليلة وضحاها.»",
+    "tst.2": "«الشات بوت الذي بنوه يتولى معظم تذاكر الدعم لدينا. كأننا أضفنا فريقًا كاملًا بين ليلة وضحاها.»",
     "tst.2r": "مدير العمليات، علامة تجارة إلكترونية",
     "tst.3": "«سريعون ومدروسون وصادقون. ناقشوا أفكارنا وأصبح المنتج أفضل بفضل ذلك.»",
     "tst.3r": "قائدة منتج، شركة تقنية مالية",
@@ -99,40 +99,14 @@ window.RAFAQ_I18N = {
     "svc.1.t": "UI/UX Design",
     "svc.2.t": "Web Development",
     "svc.3.t": "Mobile Development",
-    "svc.4.t": "AI Agents",
+    "svc.4.t": "AI & Data Science",
     "quiz.result.discoveryTitle": "Start with a Discovery Workshop",
     "quiz.result.discoveryDesc": "We'll help you validate the idea and map the right path, whether it's design, web, mobile or AI.",
     "quiz.result.desc.uiux": "Great starting point. We'll design research-backed interfaces and a design system your team can build on.",
     "quiz.result.desc.web": "We'll build a fast, scalable website or web app tailored to your goals.",
     "quiz.result.desc.mobile": "We'll craft a native-feeling iOS/Android app with the polish users notice.",
-    "quiz.result.desc.ai": "We'll design and build an AI agent that plugs into your tools and automates real work.",
+    "quiz.result.desc.ai": "We'll build and train the AI for you: machine learning models, chatbots on your own data, or data science that answers your key questions.",
     "quiz.summary": "Quiz result — interested in: {service}. Timeline: {timeline}. Budget: {budget}.",
     "work.interest": "Hi, I'm interested in a project like {name}. "
-  },
-
-  /* Scripted AI-agent demo shown in the terminal */
-  agent: {
-    en: [
-      { type: "user", text: "Find last week's signups and draft personal follow-ups for the hot leads." },
-      { type: "tool", text: "crm.search(signups, last_7_days)", result: "128 found" },
-      { type: "tool", text: "model.score_intent(leads)", result: "34 hot" },
-      { type: "tool", text: "email.draft(personalized, 34)", result: "done" },
-      { type: "agent", text: "Done ✅ I drafted 34 personalized follow-ups and queued them for your review. Should I schedule them for 9:00 AM tomorrow?" },
-      { type: "user", text: "Yes, and notify the sales team on Slack." },
-      { type: "tool", text: "scheduler.set(09:00)", result: "ok" },
-      { type: "tool", text: "slack.post(#sales)", result: "sent" },
-      { type: "agent", text: "All set. Emails go out at 9:00 AM and the sales team has the list. 🚀" }
-    ],
-    ar: [
-      { type: "user", text: "ابحث عن المشتركين الجدد من الأسبوع الماضي واكتب رسائل متابعة للعملاء المهتمين." },
-      { type: "tool", text: "crm.search(signups, last_7_days)", result: "128 found" },
-      { type: "tool", text: "model.score_intent(leads)", result: "34 hot" },
-      { type: "tool", text: "email.draft(personalized, 34)", result: "done" },
-      { type: "agent", text: "تم ✅ جهّزت 34 رسالة متابعة مخصصة وهي بانتظار مراجعتك. هل أجدولها للساعة 9 صباح الغد؟" },
-      { type: "user", text: "نعم، وأبلغ فريق المبيعات على Slack." },
-      { type: "tool", text: "scheduler.set(09:00)", result: "ok" },
-      { type: "tool", text: "slack.post(#sales)", result: "sent" },
-      { type: "agent", text: "تمام. الرسائل ستُرسل الساعة 9 صباحًا وفريق المبيعات لديه القائمة. 🚀" }
-    ]
   }
 };

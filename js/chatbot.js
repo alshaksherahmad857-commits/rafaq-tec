@@ -40,8 +40,8 @@
       id: "ai",
       svc: "ai",
       keys: ["ai", "a.i", "artificial", "chatbot", "chat bot", "bot", "agent", "agents", "gpt", "llm", "machine learning", "ml", "model", "automation", "automate", "ذكاء", "اصطناعي", "شات", "بوت", "وكيل", "وكلاء", "تعلم الآلة", "تعلم آلي", "أتمتة"],
-      en: "AI is a big part of what we do:<br>• <b>Chatbots</b> trained on your own content, for your site or WhatsApp<br>• <b>AI agents</b> that handle repetitive work, like replying to leads or updating your CRM<br>• <b>Machine learning models</b> for prediction and classification<br>• Or hire Ahmad as an <b>AI engineer</b> on your team<br>What task would you like to take off your plate?",
-      ar: "الذكاء الاصطناعي جزء كبير من شغلنا:<br>• <b>شات بوت</b> يتعلم من محتواك، لموقعك أو واتساب<br>• <b>وكلاء AI</b> يقومون بالمهام المتكررة مثل الرد على العملاء أو تحديث الـ CRM<br>• <b>نماذج تعلم آلي</b> للتوقع والتصنيف<br>• أو توظيف أحمد <b>كمهندس AI</b> ضمن فريقك<br>ما المهمة التي تريد التخلص منها؟",
+      en: "We build the AI ourselves, with a data scientist and AI engineer on the team:<br>• <b>Machine learning models</b> trained on your data, for prediction and classification<br>• <b>Chatbots</b> that learn from your own content, for your site or WhatsApp<br>• <b>Data science</b> that turns your numbers into clear decisions<br>• Or hire Ahmad as an <b>AI engineer</b> on your team<br>What problem would you like AI to solve for you?",
+      ar: "نبني الذكاء الاصطناعي بأنفسنا، مع عالم بيانات ومهندس ذكاء اصطناعي في الفريق:<br>• <b>نماذج تعلّم آلي</b> ندرّبها على بياناتك للتوقع والتصنيف<br>• <b>شات بوت</b> يتعلم من محتواك، لموقعك أو واتساب<br>• <b>علم بيانات</b> يحوّل أرقامك إلى قرارات واضحة<br>• أو توظيف أحمد <b>كمهندس AI</b> ضمن فريقك<br>ما المشكلة التي تريد أن يحلّها الذكاء الاصطناعي لك؟",
       chips: ["price", "start"]
     },
     {
@@ -158,7 +158,7 @@
     services: { en: "What do you do?", ar: "ماذا تقدمون؟" },
     web: { en: "Website", ar: "موقع إلكتروني" },
     mobile: { en: "Mobile app", ar: "تطبيق موبايل" },
-    ai: { en: "AI & chatbots", ar: "ذكاء اصطناعي" },
+    ai: { en: "AI & ML", ar: "ذكاء اصطناعي" },
     data: { en: "Data science", ar: "علم البيانات" },
     design: { en: "UI/UX design", ar: "تصميم UI/UX" },
     price: { en: "How much?", ar: "كم التكلفة؟" },
