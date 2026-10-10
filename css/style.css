@@ -341,7 +341,8 @@ html[lang="ar"] .section-title { letter-spacing: 0; line-height: 1.25; }
 
 /* ---------- Work ---------- */
 .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
-.work-card { display: block; width: 100%; text-align: start; cursor: none; }
+.work-card { display: block; width: 100%; text-align: start; cursor: pointer; border-radius: 26px; }
+.work-card:focus-visible { outline: 2px solid var(--violet); outline-offset: 6px; }
 .work-card:nth-child(even) { translate: 0 80px; }
 .work-grid { padding-bottom: 80px; }
 .work-visual {

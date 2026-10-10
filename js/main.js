@@ -416,7 +416,8 @@
 
   /* ---------------- Work cards -> contact ---------------- */
   $$(".work-card").forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (e) => {
+      e.preventDefault();
       const name = card.querySelector("h3")?.textContent?.trim() || "";
       const msg = $("#f-msg");
       if (msg && !msg.value.trim()) msg.value = t("work.interest").replace("{name}", name);
