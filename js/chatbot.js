@@ -16,14 +16,14 @@
     {
       id: "services",
       keys: ["service", "services", "offer", "do you do", "what do you", "help with", "خدمات", "خدمة", "تقدمون", "تعملون", "مجالات"],
-      en: "Here's what we build:<br>• <b>Websites and web apps</b>, full stack<br>• <b>Mobile apps</b> for iOS and Android<br>• <b>AI</b>: chatbots, AI agents, machine learning, or an AI engineer for your team<br>• <b>Data science</b>: analysis, dashboards, forecasting<br>• <b>UI/UX design</b>, or a design review and consultation<br>Which one are you thinking about?",
-      ar: "هذا ما نبنيه:<br>• <b>مواقع وتطبيقات ويب</b> متكاملة<br>• <b>تطبيقات موبايل</b> لـ iOS و Android<br>• <b>ذكاء اصطناعي</b>: شات بوت، وكلاء ذكاء اصطناعي، تعلم آلي، أو مهندس AI ينضم لفريقك<br>• <b>علم البيانات</b>: تحليل، لوحات بيانات، توقعات<br>• <b>تصميم UI/UX</b> أو مراجعة واستشارة للتصميم<br>أيّها يهمك؟",
+      en: "Here's what we build:<br>• <b>Websites and web apps</b>, full stack<br>• <b>Mobile apps</b> for iOS and Android<br>• <b>AI</b>: machine learning models and chatbots we build and train ourselves, or an AI engineer for your team<br>• <b>Data science</b>: analysis, dashboards, forecasting<br>• <b>UI/UX design</b>, or a design review and consultation<br>Which one are you thinking about?",
+      ar: "هذا ما نبنيه:<br>• <b>مواقع وتطبيقات ويب</b> متكاملة<br>• <b>تطبيقات موبايل</b> لـ iOS و Android<br>• <b>ذكاء اصطناعي</b>: نماذج تعلّم آلي وشات بوت نبنيها وندرّبها بأنفسنا، أو مهندس AI ينضم لفريقك<br>• <b>علم البيانات</b>: تحليل، لوحات بيانات، توقعات<br>• <b>تصميم UI/UX</b> أو مراجعة واستشارة للتصميم<br>أيّها يهمك؟",
       chips: ["web", "mobile", "ai", "data", "design"]
     },
     {
       id: "web",
       svc: "web",
-      keys: ["website", "web site", "web app", "webapp", "landing", "ecommerce", "e-commerce", "online store", "shop", "wordpress", "next", "react", "dashboard", "موقع", "مواقع", "متجر", "ويب", "لوحة تحكم"],
+      keys: ["website", "web site", "web app", "webapp", "landing", "ecommerce", "e-commerce", "online store", "shop", "wordpress", "react", "dashboard", "موقع", "مواقع", "متجر", "ويب", "لوحة تحكم", "next.js", "web development"],
       en: "We build business websites, online stores, dashboards and full web apps, front end and back end. Everything is fast on phones and set up for Google from day one, and you can edit the content yourself. Do you have a site already, or are we starting fresh?",
       ar: "نبني مواقع الشركات والمتاجر الإلكترونية ولوحات التحكم وتطبيقات الويب الكاملة، الواجهة والخلفية. كل موقع سريع على الجوال ومهيأ لجوجل من اليوم الأول، وتقدر تعدّل المحتوى بنفسك. عندك موقع حالياً ولا نبدأ من الصفر؟",
       chips: ["price", "time", "start"]
@@ -97,7 +97,7 @@
     },
     {
       id: "own",
-      keys: ["own", "ownership", "source code", "code", "copyright", "rights", "nda", "confidential", "privacy", "ملكية", "الكود", "المصدر", "حقوق", "سرية", "اتفاقية عدم إفصاح"],
+      keys: ["ownership", "source code", "copyright", "rights", "nda", "confidential", "privacy", "ملكية", "الكود", "المصدر", "حقوق", "سرية", "اتفاقية عدم إفصاح", "who owns"],
       en: "Once the project is fully paid, the code and designs are yours. Your idea stays private, and if you'd like an NDA before sharing details, just ask.",
       ar: "بعد اكتمال الدفع، يصبح الكود والتصاميم ملكك. فكرتك تبقى سرية، وإذا تحب نوقّع اتفاقية عدم إفصاح (NDA) قبل مشاركة التفاصيل، فقط اطلب.",
       chips: ["start"]
@@ -111,7 +111,7 @@
     },
     {
       id: "hire",
-      keys: ["hire", "hourly", "freelancer", "dedicated", "join", "team", "part time", "full time", "contract", "توظيف", "بالساعة", "فريلانسر", "مستقل", "ينضم", "فريق", "دوام"],
+      keys: ["hire", "hourly", "freelancer", "dedicated", "part time", "full time", "توظيف", "بالساعة", "فريلانسر", "مستقل", "ينضم لفريقنا", "دوام", "hire you", "in-house"],
       en: "Yes, besides full projects you can bring us into your team as a developer, AI engineer or UI/UX designer, hourly or monthly. Tell us what you need and for how long.",
       ar: "نعم، إلى جانب المشاريع الكاملة تقدر تضمّنا لفريقك كمطور أو مهندس AI أو مصمم UI/UX، بالساعة أو بالشهر. أخبرنا ما تحتاجه ولأي مدة.",
       chips: ["start"]
@@ -119,15 +119,15 @@
     {
       id: "where",
       keys: ["where", "location", "country", "remote", "arabic", "english", "language", "timezone", "أين", "مكان", "دولة", "عن بعد", "عربي", "انجليزي", "لغة"],
-      en: "We work remotely with clients in different countries, in English and Arabic. Calls happen on whatever works for you: Zoom, Google Meet or WhatsApp.",
-      ar: "نعمل عن بُعد مع عملاء في دول مختلفة، بالعربية والإنجليزية. والاجتماعات على ما يناسبك: Zoom أو Google Meet أو واتساب.",
+      en: "We work remotely, in Arabic and English, so where you are isn't a problem. Calls happen on whatever suits you: Zoom, Google Meet or WhatsApp.",
+      ar: "نعمل عن بُعد، بالعربية والإنجليزية، فمكانك ليس مشكلة. والاجتماعات على ما يناسبك: Zoom أو Google Meet أو واتساب.",
       chips: ["start"]
     },
     {
       id: "work",
-      keys: ["portfolio", "work", "examples", "previous", "projects", "case study", "أعمال", "اعمال", "نماذج", "مشاريع سابقة", "أمثلة"],
-      en: "You can see some of our work in the Work section of this page. Tell us what you're planning, and we'll share examples that are closest to it.",
-      ar: "تقدر تشوف بعض أعمالنا في قسم \"أعمالنا\" في هذه الصفحة. أخبرنا عن مشروعك ونرسل لك أمثلة قريبة منه.",
+      keys: ["portfolio", "examples", "previous", "projects", "case study", "أعمالكم", "اعمالكم", "أعمالك", "نماذج", "مشاريع سابقة", "أمثلة", "your work", "previous work", "elderlymed", "examples of"],
+      en: "Take a look at <b>Elderlymed Medical</b> in the Work section: an online store we built for a medical supplies company in Jordan, in Arabic and English, with cash on delivery and an admin dashboard. It's live at elderlymedjo.com. Tell us what you're planning and we'll walk you through how we'd approach it.",
+      ar: "شوف مشروع <b>Elderlymed Medical</b> في قسم \"أعمالنا\": متجر إلكتروني بنيناه لشركة مستلزمات طبية في الأردن، بالعربية والإنجليزية، مع الدفع عند الاستلام ولوحة تحكم للإدارة. المتجر شغّال على elderlymedjo.com. أخبرنا عن مشروعك ونشرح لك كيف سنبنيه.",
       chips: ["start"],
       go: "#work"
     },
@@ -215,9 +215,10 @@
     const scored = INDEX.map(({ t, keys }) => {
       let score = 0;
       keys.forEach((k) => {
-        // Short Latin keys must match whole words; others can match inside words (Arabic prefixes like ال).
-        const latinShort = /^[a-z.+ ]{1,3}$/.test(k);
-        const hit = latinShort ? q.includes(" " + k + " ") : q.includes(k);
+        // Latin keys match whole words (with a plural s), so "rate" doesn't fire on "generate";
+        // Arabic keys can sit inside a word, because of prefixes like ال and و.
+        const latin = /^[a-z0-9.+ ]+$/.test(k);
+        const hit = latin ? (q.includes(" " + k + " ") || q.includes(" " + k + "s ") || q.includes(" " + k + "es ")) : q.includes(k);
         if (hit) score += k.length > 4 ? 2 : 1;
       });
       // Greetings and thanks only win when nothing more specific matched.

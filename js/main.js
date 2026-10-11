@@ -53,7 +53,7 @@
       const ar = I18N.ar[n.dataset.i18n];
       n.innerHTML = next === "ar" && ar ? ar : n.dataset.en;
     });
-    document.title = next === "ar" ? "رفاق تك — أقوى معًا" : "Rafaq Tec — Stronger Together";
+    document.title = next === "ar" ? "رفاق تك | مواقع وتطبيقات وذكاء اصطناعي وتصميم UI/UX" : "Rafaq Tec | Websites, Mobile Apps, AI & UI/UX Design";
     try { localStorage.setItem("rafaq-lang", next); } catch (e) {}
     if (animate && hasGSAP && !reduce) {
       gsap.fromTo("main, .nav-links, .footer", { opacity: 0.2 }, { opacity: 1, duration: 0.6, ease: "power2.out" });
@@ -414,11 +414,11 @@
   heroInk();
 
 
-  /* ---------------- Work cards -> contact ---------------- */
-  $$(".work-card").forEach((card) => {
+  /* ---------------- "I want something like this" -> contact ---------------- */
+  $$(".project-like").forEach((card) => {
     card.addEventListener("click", (e) => {
       e.preventDefault();
-      const name = card.querySelector("h3")?.textContent?.trim() || "";
+      const name = card.dataset.project || "";
       const msg = $("#f-msg");
       if (msg && !msg.value.trim()) msg.value = t("work.interest").replace("{name}", name);
       goTo($("#contact"), "#contact");
@@ -505,24 +505,48 @@
   })();
 
   /* ---------------- Contact form ---------------- */
+  // Where enquiries go. Until there's a server, the form hands the visitor's message to
+  // their email app (or WhatsApp) with everything already filled in.
+  // email: the business inbox · whatsapp: international number, digits only (e.g. 9627XXXXXXXX)
+  const CONTACT = { email: "", whatsapp: "" };
+
   const form = $("#contact-form");
   const note = $("#form-note");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    let ok = true;
+    let firstBad = null;
     ["f-name", "f-email", "f-msg"].forEach((id) => {
       const input = $("#" + id);
-      const valid = input.value.trim() && (input.type !== "email" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value));
+      const valid = !!input.value.trim() && (input.type !== "email" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim()));
       input.parentElement.classList.toggle("invalid", !valid);
-      if (!valid) ok = false;
+      input.setAttribute("aria-invalid", String(!valid));
+      if (!valid && !firstBad) firstBad = input;
     });
-    note.classList.toggle("err", !ok);
-    note.textContent = ok ? t("ct.ok") : t("ct.err");
-    if (ok) {
-      // TODO: send the form data to your backend / email service here.
+    note.classList.toggle("err", !!firstBad);
+    if (firstBad) { note.textContent = t("ct.err"); firstBad.focus(); return; }
+
+    const name = $("#f-name").value.trim();
+    const services = $$('#contact-form input[name="svc"]:checked').map((c) => c.nextElementSibling.textContent.trim());
+    const body = [
+      `${t("ct.name")}: ${name}`,
+      `${t("ct.email")}: ${$("#f-email").value.trim()}`,
+      services.length ? `${t("ct.need")}: ${services.join(", ")}` : "",
+      "",
+      $("#f-msg").value.trim(),
+    ].filter((line, i) => line || i === 3).join("\n");
+
+    if (CONTACT.email) {
+      const subject = t("ct.subject").replace("{name}", name);
+      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      note.textContent = t("ct.mail");
+    } else if (CONTACT.whatsapp) {
+      window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(body)}`, "_blank", "noopener");
+      note.textContent = t("ct.wa");
+    } else {
+      note.textContent = t("ct.ok");
       form.reset();
-      if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
     }
+    if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
   });
 
   /* ---------------- Counters (fallback without GSAP) ---------------- */
@@ -586,16 +610,14 @@
       $$(".step").forEach((s) => gsap.from(s, { opacity: 0, y: 60, duration: 1, ease: "expo.out", scrollTrigger: { trigger: s, start: "top 88%" } }));
     });
 
-    // Work visuals zoom in as they enter
-    $$(".work-visual").forEach((v) => {
+    // The project screenshot opens up as it enters
+    $$(".project-shot").forEach((v) => {
       gsap.fromTo(v, { clipPath: "inset(12% 12% 12% 12% round 26px)" }, {
         clipPath: "inset(0% 0% 0% 0% round 26px)", ease: "none",
         scrollTrigger: { trigger: v, start: "top 95%", end: "top 45%", scrub: true },
       });
     });
 
-    // Contact title glow drift
-    gsap.fromTo(".contact-glow", { yPercent: 30, scale: 0.8 }, { yPercent: 0, scale: 1.1, ease: "none", scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom bottom", scrub: true } });
 
     // Footer giant wordmark rises
     gsap.from(".footer-giant span", { yPercent: 50, opacity: 0, ease: "none", scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true } });
