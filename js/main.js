@@ -100,7 +100,7 @@
 
   function goTo(target, id) {
     closeMenu();
-    if (lenis) lenis.scrollTo(target, { offset: id === "#home" ? 0 : -60, duration: 1.4 });
+    if (lenis) lenis.scrollTo(target, { offset: id === "#home" ? 0 : -90, duration: 1.4 });
     else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
   }
 
@@ -115,19 +115,31 @@
   });
 
   /* ---------------- Nav & menu ---------------- */
-  const nav = $("#nav");
-  let lastY = 0;
+  // The navbar stays in view and highlights the section you're reading
+  const navLinks = $$('.nav-links a[href^="#"], .mobile-menu a[href^="#"]:not(.mobile-cta)');
+  const spySections = [...new Set(navLinks.map((a) => a.getAttribute("href")))].map((id) => $(id)).filter(Boolean);
   let ticking = false;
+  function setActive(id) {
+    navLinks.forEach((a) => {
+      const on = a.getAttribute("href") === id;
+      a.classList.toggle("is-active", on);
+      if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+    });
+  }
   function onScroll() {
-    const y = window.scrollY;
-    nav.classList.toggle("hidden", y > 500 && y > lastY + 2 && !root.classList.contains("menu-open"));
-    if (y < lastY - 2) nav.classList.remove("hidden");
-    lastY = y;
+    const line = innerHeight * 0.35;
+    let current = null;
+    spySections.forEach((sec) => { if (sec.getBoundingClientRect().top <= line) current = "#" + sec.id; });
+    // At the very bottom, the last section is the one in view even if it's short
+    if (innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && spySections.length) current = "#" + spySections[spySections.length - 1].id;
+    setActive(current);
     ticking = false;
   }
   addEventListener("scroll", () => {
     if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
   }, { passive: true });
+  addEventListener("load", onScroll);
+  onScroll();
 
   const burger = $("#burger");
   const mobileMenu = $("#mobile-menu");

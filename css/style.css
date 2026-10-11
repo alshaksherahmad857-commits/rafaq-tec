@@ -139,7 +139,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   transition: background .4s, border-color .4s, transform .5s var(--ease);
 }
 [dir="rtl"] .nav { padding: 10px 20px 10px 12px; }
-.nav.hidden { transform: translate(-50%, -140%); }
 .brand { display: flex; align-items: center; gap: 10px; direction: ltr; }
 .brand-mark { width: 30px; height: auto; transition: transform .6s var(--ease); }
 .brand:hover .brand-mark { transform: rotate(-12deg) scale(1.08); }
@@ -148,6 +147,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .nav-links { display: flex; gap: 6px; }
 .nav-links a { position: relative; padding: 8px 14px; font-size: 14.5px; color: var(--muted); border-radius: 999px; transition: color .3s, background .3s; }
 .nav-links a:hover { color: var(--text); background: var(--surface-2); }
+.nav-links a.is-active { color: var(--text); background: var(--surface-2); }
+.nav-links a.is-active::after { content: ""; position: absolute; left: 50%; bottom: 3px; width: 14px; height: 2px; margin-left: -7px; border-radius: 2px; background: var(--grad); }
+.mobile-menu a.is-active { background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
 .lang-toggle {
   position: relative; display: flex; align-items: center; height: 38px; padding: 3px; border-radius: 999px;
@@ -341,7 +343,11 @@ html[lang="ar"] .section-title { letter-spacing: 0; line-height: 1.25; }
 
 /* ---------- Work ---------- */
 /* Featured project: screenshot first, the story slides up on hover or focus */
-.project { position: relative; }
+.project { position: relative; display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
+.project .work-meta { display: block; padding: 0; }
+.project .work-meta h3 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.15; }
+.project .work-meta p { margin-top: 10px; font-size: 16px; max-width: 30ch; }
+@media (max-width: 960px) { .project { grid-template-columns: 1fr; } .project .work-meta { padding: 4px 6px 0; } }
 .project-shot {
   position: relative; border-radius: 26px; overflow: hidden; isolation: isolate;
   border: 1px solid var(--line); background: #0b0f14;
@@ -353,6 +359,14 @@ html[lang="ar"] .section-title { letter-spacing: 0; line-height: 1.25; }
 .project-shot picture, .project-shot img { display: block; width: 100%; height: auto; }
 .project-shot img { transition: transform 1.2s var(--ease), filter .6s var(--ease); }
 html[lang="ar"] .only-en, html[lang="en"] .only-ar { display: none; }
+:root[data-theme="light"] .only-dark, :root:not([data-theme="light"]) .only-light { display: none; }
+/* In light mode the story panel is light too */
+:root[data-theme="light"] .project-story {
+  --text: #0a1b33; --muted: #50627e; --line: rgba(1, 43, 98, .16); --surface: rgba(255, 255, 255, .6); --surface-2: rgba(255, 255, 255, .9); --hover-line: rgba(1, 43, 98, .35);
+  background: linear-gradient(to top, rgba(240, 245, 252, .98) 0%, rgba(240, 245, 252, .93) 55%, rgba(240, 245, 252, .6) 100%);
+}
+:root[data-theme="light"] .project-kicker { color: #016cf0; }
+:root[data-theme="light"] .project-shot { background: #f6f7f8; box-shadow: 0 40px 80px -45px rgba(1, 43, 98, .45); }
 .project-hint {
   position: absolute; z-index: 2; inset-inline-end: 18px; bottom: 18px; padding: 8px 14px; border-radius: 999px;
   font-size: 12.5px; font-weight: 600; color: #fbfbfb; background: rgba(1, 7, 20, .72); border: 1px solid rgba(255, 255, 255, .16);
@@ -362,18 +376,16 @@ html[lang="ar"] .only-en, html[lang="en"] .only-ar { display: none; }
   /* Always dark over the screenshot, in both themes */
   --text: #fbfbfb; --muted: #b5c3d9; --line: rgba(255, 255, 255, .18); --surface: rgba(255, 255, 255, .08); --surface-2: rgba(255, 255, 255, .14); --hover-line: rgba(255, 255, 255, .4);
   position: absolute; z-index: 3; inset: 38px 0 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 18px;
-  padding: clamp(24px, 4vw, 52px); color: var(--text);
+  padding: clamp(22px, 3.2vw, 40px); color: var(--text);
   background: linear-gradient(to top, rgba(1, 7, 20, .97) 0%, rgba(1, 7, 20, .9) 55%, rgba(1, 7, 20, .55) 100%);
   opacity: 0; transform: translateY(28px); transition: opacity .5s var(--ease), transform .7s var(--ease);
 }
-.project:hover .project-story, .project:focus-within .project-story { opacity: 1; transform: none; }
-.project:hover .project-hint, .project:focus-within .project-hint { opacity: 0; }
-.project:hover .project-shot img, .project:focus-within .project-shot img { transform: scale(1.04); filter: blur(3px); }
+.project-shot:hover .project-story, .project-shot:focus-within .project-story { opacity: 1; transform: none; }
+.project-shot:hover .project-hint, .project-shot:focus-within .project-hint { opacity: 0; }
+.project-shot:hover img, .project-shot:focus-within img { transform: scale(1.04); filter: blur(3px); }
 .project-kicker { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #54efe4; }
 html[lang="ar"] .project-kicker { letter-spacing: 0; font-size: 14px; }
-.project-desc { margin: 0; max-width: 64ch; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.7; }
-.project-points { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.project-points li { font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.project-desc { margin: 0; max-width: 54ch; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.7; }
 .project-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .project-actions .arrow { width: 16px; height: 16px; }
 [dir="rtl"] .project-actions .arrow { transform: scaleX(-1); }
@@ -381,7 +393,8 @@ html[lang="ar"] .project-kicker { letter-spacing: 0; font-size: 14px; }
 @media (hover: none), (max-width: 760px) {
   .project-hint { display: none; }
   .project-story { position: relative; inset: auto; opacity: 1; transform: none; background: linear-gradient(180deg, #06101f, #010714); }
-  .project:hover .project-shot img { transform: none; filter: none; }
+  :root[data-theme="light"] .project-story { background: #f0f5fc; }
+  .project-shot:hover img { transform: none; filter: none; }
 }
 .work-meta { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 20px 6px 0; }
 .work-meta h3 { margin: 0; font-size: 24px; letter-spacing: -.02em; }
