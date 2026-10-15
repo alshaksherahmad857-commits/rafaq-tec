@@ -2,7 +2,7 @@
    Rafaq Tec — hero fluid (WebGL)
    A small "stable fluids" simulation: moving the pointer pushes the
    water and drops ink in the logo colours, which swirls, marbles and
-   fades quickly. Returns null when the device can't run it, so the
+   fades gradually. Returns null when the device can't run it, so the
    caller can fall back to the simpler canvas effect.
    ========================================================== */
 window.RafaqFluid = function (canvas, opts) {
@@ -12,7 +12,7 @@ window.RafaqFluid = function (canvas, opts) {
     light: false,          // light theme: ink tints a pale background
     simRes: 192,
     dyeRes: 1024,
-    dyeFade: 3.4,          // higher = shorter trail
+    dyeFade: 1.25,          // higher = shorter trail
     velFade: 2.4,          // water settles quickly, so the plume stays compact
     pressure: 0.8,
     pressureIters: 20,
@@ -385,7 +385,7 @@ window.RafaqFluid = function (canvas, opts) {
 
   // ---------- Loop ----------
   let running = false, visible = true, lastT = 0, lastInput = -1e9;
-  const IDLE = 3.2; // seconds after the last movement before the loop stops
+  const IDLE = 7.5; // seconds after the last movement before the loop stops
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.033, lastT ? (now - lastT) / 1000 : 0.016);

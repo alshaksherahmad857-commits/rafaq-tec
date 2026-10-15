@@ -171,6 +171,11 @@
   const UI = {
     en: {
       name: "Rafaq Assistant",
+      faqTitle: "Frequently asked questions",
+      faqIntro: "Find a quick answer, or start a conversation below.",
+      startChat: "Start a conversation",
+      resumeChat: "Continue conversation",
+      backFaq: "FAQs",
       teaser: "Hi! Got a question? I can help.",
       welcome: "Hi, I'm the Rafaq assistant. 👋 I can tell you about our services, pricing, timelines and how we work. What's on your mind?",
       placeholder: "Type your question…",
@@ -183,6 +188,11 @@
     },
     ar: {
       name: "مساعد رفاق",
+      faqTitle: "الأسئلة الشائعة",
+      faqIntro: "اطّلع على الإجابات السريعة أو ابدأ محادثة أدناه.",
+      startChat: "ابدأ محادثة",
+      resumeChat: "تابع المحادثة",
+      backFaq: "الأسئلة الشائعة",
       teaser: "أهلاً! عندك سؤال؟ أقدر أساعدك.",
       welcome: "أهلاً، أنا مساعد رفاق. 👋 أقدر أخبرك عن خدماتنا والأسعار والمدة وطريقة عملنا. بماذا تفكر؟",
       placeholder: "اكتب سؤالك…",
@@ -195,6 +205,34 @@
     }
   };
   const ui = (k) => UI[isAr() ? "ar" : "en"][k];
+
+  const FAQS = [
+  {
+    "id": "1",
+    "question": "What can you help us build?",
+    "answer": "We design interfaces and build websites, mobile apps, AI solutions and data tools. We can take an idea through launch or help with a specific part of your product."
+  },
+  {
+    "id": "2",
+    "question": "How do we get started?",
+    "answer": "Tell us a little about your idea using the contact form. We’ll discuss your goals and next steps. There’s no commitment unless you choose to move forward."
+  },
+  {
+    "id": "3",
+    "question": "How much will my project cost?",
+    "answer": "The price depends on the scope and features. We agree on the scope, milestones and price in writing before work begins."
+  },
+  {
+    "id": "4",
+    "question": "Can you build in Arabic and English?",
+    "answer": "Yes. We design and build for both languages, including right-to-left layouts and words that feel natural in each language."
+  },
+  {
+    "id": "5",
+    "question": "What happens after launch?",
+    "answer": "We can continue supporting your product with fixes, improvements and new features as your business grows."
+  }
+];
 
   /* ---------------- Matching ---------------- */
   const norm = (s) => (" " + s + " ")
@@ -261,10 +299,17 @@
     <section class="rb-panel" id="rb-panel" role="dialog" aria-modal="false" aria-labelledby="rb-name" hidden>
       <header class="rb-head">
         <div class="rb-meta"><b id="rb-name"></b></div>
+        <button type="button" class="rb-faq-back" hidden></button>
         <button type="button" class="rb-close" aria-label="Close">
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </header>
+      <div class="rb-welcome" data-lenis-prevent>
+        <h2 class="rb-faq-title"></h2>
+        <p class="rb-faq-intro"></p>
+        <div class="rb-faq-list"></div>
+        <button type="button" class="rb-start-chat"></button>
+      </div>
       <div class="rb-log" role="log" aria-live="polite" data-lenis-prevent></div>
       <div class="rb-chips"></div>
       <form class="rb-form" autocomplete="off">
@@ -282,6 +327,7 @@
   const $ = (s) => wrap.querySelector(s);
   const fab = $(".rb-fab"), panel = $(".rb-panel"), log = $(".rb-log"), chipsBox = $(".rb-chips");
   const form = $(".rb-form"), input = $(".rb-input"), teaser = $(".rb-teaser");
+  const welcome = $(".rb-welcome"), faqList = $(".rb-faq-list"), startChat = $(".rb-start-chat"), backFaq = $(".rb-faq-back");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let started = false, lastQuestion = "", lastSvc = null;
 
@@ -294,6 +340,21 @@
     $(".rb-close").setAttribute("aria-label", ui("close"));
     fab.setAttribute("aria-label", ui("open"));
     wrap.dir = isAr() ? "rtl" : "ltr";
+    $(".rb-faq-title").textContent = ui("faqTitle");
+    $(".rb-faq-intro").textContent = ui("faqIntro");
+    startChat.textContent = ui(started ? "resumeChat" : "startChat");
+    backFaq.textContent = ui("backFaq");
+    const translations = window.RAFAQ_I18N?.ar || {};
+    faqList.replaceChildren();
+    FAQS.forEach((faq) => {
+      const item = document.createElement("details");
+      const question = document.createElement("summary");
+      const answer = document.createElement("p");
+      question.textContent = isAr() ? translations[`faq.${faq.id}.q`] || faq.question : faq.question;
+      answer.textContent = isAr() ? translations[`faq.${faq.id}.a`] || faq.answer : faq.answer;
+      item.append(question, answer);
+      faqList.append(item);
+    });
   }
 
   function scrollDown() { log.scrollTop = log.scrollHeight; }
@@ -336,9 +397,7 @@
       if (box) box.checked = true;
     }
     toggle(false);
-    const target = document.getElementById("contact");
-    if (target) target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-    setTimeout(() => { const n = document.getElementById("f-name"); if (n) n.focus({ preventScroll: true }); }, reduce ? 0 : 900);
+    if (window.RafaqOpenContact) window.RafaqOpenContact();
   }
 
   function reply(topic, ar) {
@@ -379,7 +438,17 @@
     reply(topic, ar);
   }
 
+  function showFaq() {
+    welcome.hidden = false;
+    log.hidden = chipsBox.hidden = form.hidden = true;
+    backFaq.hidden = true;
+    startChat.textContent = ui(started ? "resumeChat" : "startChat");
+  }
+
   function start() {
+    welcome.hidden = true;
+    log.hidden = chipsBox.hidden = form.hidden = false;
+    backFaq.hidden = false;
     if (started) return;
     started = true;
     addMsg("bot", ui("welcome"));
@@ -393,8 +462,9 @@
     fab.setAttribute("aria-expanded", String(willOpen));
     hideTeaser();
     if (willOpen) {
-      start();
-      if (matchMedia("(pointer: fine)").matches) setTimeout(() => input.focus(), 50);
+      if (matchMedia("(pointer: fine)").matches) {
+        (welcome.hidden ? input : startChat).focus({ preventScroll: true });
+      }
     } else {
       fab.focus({ preventScroll: true });
     }
@@ -405,6 +475,8 @@
     try { sessionStorage.setItem("rb-teased", "1"); } catch (e) {}
   }
 
+  startChat.addEventListener("click", () => { start(); input.focus({ preventScroll: true }); });
+  backFaq.addEventListener("click", () => { showFaq(); startChat.focus({ preventScroll: true }); });
   fab.addEventListener("click", () => toggle());
   $(".rb-close").addEventListener("click", () => toggle(false));
   $(".rb-teaser-x").addEventListener("click", hideTeaser);
@@ -425,11 +497,12 @@
     if (started) {
       log.innerHTML = "";
       started = false;
-      if (!panel.hidden) start(); else setChips([]);
+      if (welcome.hidden) start(); else { setChips([]); showFaq(); }
     }
   }).observe(root, { attributes: true, attributeFilter: ["lang"] });
 
   paintChrome();
+  showFaq();
 
   // A friendly nudge once per visit, after the visitor has had time to look around.
   let teased = false;
