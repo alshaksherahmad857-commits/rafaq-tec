@@ -790,9 +790,12 @@ html[lang="ar"] .agile-method-title { font-size: 26px; }
 .social-ig { border-radius: 13px; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
 .social-ig svg { width: 58%; height: 58%; fill: #fff; }
 .social-ig:hover { box-shadow: 0 10px 24px -8px rgba(214, 36, 159, .7); }
-.contact-alt { margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.contact-alt p { margin: 0; color: var(--muted); font-size: 15px; }
-.contact-alt a[href^="mailto"] { color: var(--text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
-.contact-alt a[href^="mailto"]:hover { text-decoration-color: var(--violet); }
 .footer-top .socials { margin-inline-start: auto; }
 .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+/* Email sits with the social logos in the footer */
+.social-mail { background: var(--grad); }
+.social-mail svg { width: 52%; height: 52%; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.social-mail:hover { box-shadow: 0 10px 24px -8px rgba(1, 108, 240, .7); }
+.footer-email { color: var(--text); font-weight: 600; font-size: 15px; margin-inline-end: 6px; padding: 12px 0; direction: ltr; }
+.footer-email:hover { color: var(--violet); }
+@media (max-width: 760px) { .footer-top .socials { margin-inline-start: 0; flex-wrap: wrap; } }
