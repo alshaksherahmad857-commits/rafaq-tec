@@ -148,17 +148,17 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .mobile-menu a.is-active { background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
 .lang-toggle {
-  position: relative; display: flex; align-items: center; height: 38px; padding: 3px; border-radius: 999px;
+  position: relative; display: inline-flex; align-items: stretch; height: 42px; padding: 3px; border-radius: 999px; direction: ltr;
   border: 1px solid var(--line); background: var(--surface); font-size: 13px; font-weight: 700;
 }
-.lang-toggle span { position: relative; z-index: 1; width: 34px; text-align: center; transition: color .3s; color: var(--muted); }
+.lang-toggle span { position: relative; z-index: 1; width: 38px; display: grid; place-items: center; transition: color .3s; color: var(--muted); }
+/* The pill fills exactly one half of the track, with the same 3px gap on every side */
 .lang-toggle::before {
-  content: ""; position: absolute; top: 3px; left: 3px; width: 34px; height: 30px; border-radius: 999px; background: var(--grad);
+  content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: 38px; border-radius: 999px; background: var(--grad);
   transition: transform .45s var(--ease);
 }
-html[lang="ar"] .lang-toggle::before { transform: translateX(34px); }
+html[lang="ar"] .lang-toggle::before { transform: translateX(38px); }
 html[lang="en"] .lang-en, html[lang="ar"] .lang-ar { color: #fff; }
-.lang-toggle { direction: ltr; }
 .burger { display: none; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); position: relative; }
 .burger span { position: absolute; left: 12px; right: 12px; height: 2px; background: currentColor; border-radius: 2px; transition: transform .4s var(--ease), top .4s var(--ease); }
 .burger span:first-child { top: 16px; } .burger span:last-child { top: 24px; }
@@ -766,7 +766,6 @@ html[lang="ar"] .agile-method-title { font-size: 26px; }
 /* ---------- Accessibility & phone polish (UI/UX audit) ---------- */
 /* Every control shows where keyboard focus is */
 :where(a, button, summary, [tabindex]):focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
-.lang-toggle { height: 42px; }
 .footer-links a { display: inline-block; padding: 12px 2px; }
 @media (max-width: 520px) {
   /* Keep each headline line whole instead of breaking "AI." onto its own line */
