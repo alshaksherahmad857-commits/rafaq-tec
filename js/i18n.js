@@ -119,7 +119,9 @@ window.RAFAQ_I18N = {
     "ct.subject": "استفسار عن مشروع من {name}",
     "work.interest": "مرحباً، يهمّني مشروع مثل {name}. ",
     "ct.mail": "يُفتح الآن تطبيق البريد ورسالتك جاهزة. اضغط إرسال فقط.",
-    "ct.wa": "فتحنا واتساب ورسالتك جاهزة. اضغط إرسال فقط.",
+    "ct.sending": "جارٍ الإرسال...",
+    "ct.fail": "تعذّر الإرسال الآن، لذلك نفتح لك تطبيق البريد ورسالتك جاهزة. اضغط إرسال فقط.",
+    "ct.direct": "أو راسلنا مباشرة على",
 
     "ft.rights": "جميع الحقوق محفوظة.",
     "cursor.view": "عرض"
@@ -130,7 +132,8 @@ window.RAFAQ_I18N = {
     "ct.err": "Please fill in your name, a valid email and a message.",
     "ct.subject": "Project enquiry from {name}",
     "ct.mail": "Your email app is opening with your message ready. Just press Send.",
-    "ct.wa": "WhatsApp is opening with your message ready. Just press Send.",
+    "ct.sending": "Sending...",
+    "ct.fail": "We couldn't send it just now, so your email app is opening with your message ready. Just press Send.",
     "ct.name": "Name",
     "ct.email": "Email",
     "ct.need": "Services",

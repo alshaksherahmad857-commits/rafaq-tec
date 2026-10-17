@@ -486,9 +486,6 @@ html[lang="ar"] .contact-title { letter-spacing: 0; line-height: 1.25; }
 .footer-top { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
 .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
 .footer-links a { color: var(--muted); transition: color .3s; } .footer-links a:hover { color: var(--text); }
-.socials { display: flex; gap: 10px; }
-.socials a { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 700; transition: background .3s, transform .4s var(--ease); }
-.socials a:hover { background: var(--grad); transform: translateY(-4px); border-color: transparent; }
 .footer-giant { direction: ltr; text-align: center; line-height: .8; margin-top: 50px; user-select: none; }
 .footer-giant span { display: inline-block; padding-inline: .06em; font-size: clamp(80px, 23vw, 360px); font-weight: 800; letter-spacing: -.06em; background: linear-gradient(180deg, var(--giant), transparent 85%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .footer-bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 22px 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
@@ -779,3 +776,23 @@ html[lang="ar"] .agile-method-title { font-size: 26px; }
   /* Room so the chat button never covers the last lines of the page */
   .footer-bottom { padding-bottom: 96px; }
 }
+
+/* ---------- Social links: official Facebook and Instagram marks ---------- */
+.socials { display: flex; gap: 12px; align-items: center; }
+.social { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; transition: transform .35s var(--ease), box-shadow .35s; }
+.social svg { width: 100%; height: 100%; display: block; }
+.social:hover { transform: translateY(-3px); }
+/* Facebook: the blue circle with the white f */
+.social-fb { background: #fff; }
+.social-fb svg { fill: #0866ff; }
+.social-fb:hover { box-shadow: 0 10px 24px -8px rgba(8, 102, 255, .7); }
+/* Instagram: the white glyph on the brand gradient */
+.social-ig { border-radius: 13px; background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.social-ig svg { width: 58%; height: 58%; fill: #fff; }
+.social-ig:hover { box-shadow: 0 10px 24px -8px rgba(214, 36, 159, .7); }
+.contact-alt { margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.contact-alt p { margin: 0; color: var(--muted); font-size: 15px; }
+.contact-alt a[href^="mailto"] { color: var(--text); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
+.contact-alt a[href^="mailto"]:hover { text-decoration-color: var(--violet); }
+.footer-top .socials { margin-inline-start: auto; }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }

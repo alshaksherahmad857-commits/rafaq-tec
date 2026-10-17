@@ -598,15 +598,23 @@
   })();
 
   /* ---------------- Contact form ---------------- */
-  // Where enquiries go. Until there's a server, the form hands the visitor's message to
-  // their email app (or WhatsApp) with everything already filled in.
-  // email: the business inbox · whatsapp: international number, digits only (e.g. 9627XXXXXXXX)
-  const CONTACT = { email: "", whatsapp: "" };
+  // Messages go straight to the company inbox through FormSubmit (no server needed).
+  // The very first message triggers a one-time "Activate" email to this address.
+  const CONTACT = { email: "rafaqtec@gmail.com" };
+  const FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT.email}`;
 
   const form = $("#contact-form");
   const note = $("#form-note");
-  form.addEventListener("submit", (e) => {
+  const sendBtn = form.querySelector('button[type="submit"]');
+  const sendLabel = sendBtn.querySelector("span");
+  function showNote(text, isErr) {
+    note.textContent = text;
+    note.classList.toggle("err", !!isErr);
+    if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
+  }
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (sendBtn.disabled) return;
     let firstBad = null;
     ["f-name", "f-email", "f-msg"].forEach((id) => {
       const input = $("#" + id);
@@ -615,31 +623,42 @@
       input.setAttribute("aria-invalid", String(!valid));
       if (!valid && !firstBad) firstBad = input;
     });
-    note.classList.toggle("err", !!firstBad);
-    if (firstBad) { note.textContent = t("ct.err"); firstBad.focus(); return; }
+    if (firstBad) { showNote(t("ct.err"), true); firstBad.focus(); return; }
 
     const name = $("#f-name").value.trim();
+    const email = $("#f-email").value.trim();
+    const message = $("#f-msg").value.trim();
     const services = $$('#contact-form input[name="svc"]:checked').map((c) => c.nextElementSibling.textContent.trim());
-    const body = [
-      `${t("ct.name")}: ${name}`,
-      `${t("ct.email")}: ${$("#f-email").value.trim()}`,
-      services.length ? `${t("ct.need")}: ${services.join(", ")}` : "",
-      "",
-      $("#f-msg").value.trim(),
-    ].filter((line, i) => line || i === 3).join("\n");
+    const subject = t("ct.subject").replace("{name}", name);
 
-    if (CONTACT.email) {
-      const subject = t("ct.subject").replace("{name}", name);
-      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      note.textContent = t("ct.mail");
-    } else if (CONTACT.whatsapp) {
-      window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(body)}`, "_blank", "noopener");
-      note.textContent = t("ct.wa");
-    } else {
-      note.textContent = t("ct.ok");
+    sendBtn.disabled = true;
+    sendBtn.setAttribute("aria-busy", "true");
+    const idle = sendLabel.textContent;
+    sendLabel.textContent = t("ct.sending");
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name, email, services: services.join(", ") || "-", message,
+          _subject: subject, _template: "table", _captcha: "false",
+          _honey: form.querySelector('input[name="_honey"]').value,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
+      showNote(t("ct.ok"));
       form.reset();
+    } catch (err) {
+      // If the service can't be reached, don't lose the message: open the visitor's email app instead
+      const body = [`${t("ct.name")}: ${name}`, `${t("ct.email")}: ${email}`, services.length ? `${t("ct.need")}: ${services.join(", ")}` : "", "", message].join("\n");
+      showNote(t("ct.fail"), true);
+      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.removeAttribute("aria-busy");
+      sendLabel.textContent = idle;
     }
-    if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
   });
 
   /* ---------------- Counters (fallback without GSAP) ---------------- */
