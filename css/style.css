@@ -629,7 +629,9 @@ html[lang="ar"] .about-copy { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .contact-dialog::backdrop { background: rgba(0, 7, 20, .72); backdrop-filter: blur(8px); }
 .contact-dialog h2 { margin: 0 40px 24px 0; font-size: 28px; }
 .contact-dialog .contact-form { border: 0; padding: 0; background: transparent; backdrop-filter: none; }
-.dialog-close { position: absolute; inset-inline-end: 18px; top: 14px; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: inherit; font-size: 28px; cursor: pointer; }
+.dialog-close { position: absolute; inset-inline-end: 18px; top: 14px; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: inherit; cursor: pointer; transition: background .25s, border-color .25s; }
+.dialog-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.dialog-close:hover { background: var(--surface-2); border-color: var(--hover-line); }
 body.contact-modal-open { overflow: hidden; }
 @media (max-width: 960px) {
   .process-track { grid-template-columns: 1fr; gap: 28px; max-width: 620px; margin-inline: auto; }
@@ -760,3 +762,21 @@ html[lang="ar"] .agile-method-title { font-size: 26px; }
 .agile-spiral-bridge { fill: #015fb3; }
 
 .cx-team-icon { width: clamp(36px, 4.5vw, 56px); height: auto; margin: auto; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Accessibility & phone polish (UI/UX audit) ---------- */
+/* Every control shows where keyboard focus is */
+:where(a, button, summary, [tabindex]):focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+.lang-toggle { height: 42px; }
+.footer-links a { display: inline-block; padding: 12px 2px; }
+@media (max-width: 520px) {
+  /* Keep each headline line whole instead of breaking "AI." onto its own line */
+  .hero-title { font-size: clamp(30px, 8.6vw, 42px); }
+  html[lang="ar"] .hero-title { font-size: clamp(30px, 8.4vw, 40px); }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { width: 100%; }
+  .cx-txt b { font-size: 12px; }
+  .agile-ribbon .agile-ribbon-label { font-size: 40px; }
+  .agile-ribbon .agile-method-title { font-size: 29px; }
+  /* Room so the chat button never covers the last lines of the page */
+  .footer-bottom { padding-bottom: 96px; }
+}

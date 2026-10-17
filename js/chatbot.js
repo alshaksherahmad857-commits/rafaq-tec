@@ -462,6 +462,8 @@
     fab.setAttribute("aria-expanded", String(willOpen));
     hideTeaser();
     if (willOpen) {
+      // Open straight into the conversation; the FAQs stay one tap away in the header
+      if (!started) start();
       if (matchMedia("(pointer: fine)").matches) {
         (welcome.hidden ? input : startChat).focus({ preventScroll: true });
       }
@@ -502,7 +504,6 @@
   }).observe(root, { attributes: true, attributeFilter: ["lang"] });
 
   paintChrome();
-  showFaq();
 
   // A friendly nudge once per visit, after the visitor has had time to look around.
   let teased = false;

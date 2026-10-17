@@ -42,6 +42,9 @@
   i18nNodes.forEach((n) => (n.dataset.en = n.innerHTML));
   let lang = "en";
   try { lang = localStorage.getItem("rafaq-lang") || "en"; } catch (e) {}
+  // A ?lang=ar or ?lang=en link (used by search engines for the Arabic version) wins
+  const urlLang = new URLSearchParams(location.search).get("lang");
+  if (urlLang === "ar" || urlLang === "en") lang = urlLang;
 
   const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
 
