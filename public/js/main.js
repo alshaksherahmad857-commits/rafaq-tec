@@ -1,5 +1,5 @@
 /* ==========================================================
-   Rafaq Tec — interactions & motion
+   RafaqTech — interactions & motion
    ========================================================== */
 (() => {
   const $ = (s, c = document) => c.querySelector(s);
@@ -42,6 +42,9 @@
   i18nNodes.forEach((n) => (n.dataset.en = n.innerHTML));
   let lang = "en";
   try { lang = localStorage.getItem("rafaq-lang") || "en"; } catch (e) {}
+  // A ?lang=ar or ?lang=en link (used by search engines for the Arabic version) wins
+  const urlLang = new URLSearchParams(location.search).get("lang");
+  if (urlLang === "ar" || urlLang === "en") lang = urlLang;
 
   const t = (key) => (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
 
@@ -53,13 +56,14 @@
       const ar = I18N.ar[n.dataset.i18n];
       n.innerHTML = next === "ar" && ar ? ar : n.dataset.en;
     });
-    document.title = next === "ar" ? "رفاق تك | مواقع وتطبيقات وذكاء اصطناعي وتصميم UI/UX" : "Rafaq Tec | Websites, Mobile Apps, AI & UI/UX Design";
+    document.title = next === "ar" ? "رفاق تك | مواقع وتطبيقات وذكاء اصطناعي وتصميم UI/UX" : "RafaqTech | Websites, Mobile Apps, AI & UI/UX Design";
     try { localStorage.setItem("rafaq-lang", next); } catch (e) {}
     if (animate && hasGSAP && !reduce) {
       gsap.fromTo("main, .nav-links, .footer", { opacity: 0.2 }, { opacity: 1, duration: 0.6, ease: "power2.out" });
     }
     if (window.ScrollTrigger) requestAnimationFrame(() => ScrollTrigger.refresh());
     quiz.refresh();
+    resetTyping();
   }
 
   $("#lang-toggle").addEventListener("click", () => applyLang(lang === "en" ? "ar" : "en", true));
@@ -108,6 +112,7 @@
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
       e.preventDefault();
+      if (id === "#contact") return;
       const target = id.length > 1 ? $(id) : null;
       if (!target) return;
       goTo(target, id);
@@ -151,6 +156,22 @@
   }
   function closeMenu() { setMenu(false); }
   burger.addEventListener("click", () => setMenu(!root.classList.contains("menu-open")));
+  // Move the same controls at the navigation breakpoint, preserving their state.
+  const collapsedNav = matchMedia("(max-width: 960px)");
+  const navActions = $(".nav-actions");
+  const languageBtn = $("#lang-toggle");
+  function placeNavSettings() {
+    closeMenu();
+    if (collapsedNav.matches) {
+      $("#menu-theme-slot").append(themeBtn);
+      $("#menu-lang-slot").append(languageBtn);
+    } else {
+      navActions.prepend(themeBtn, languageBtn);
+    }
+  }
+  collapsedNav.addEventListener("change", placeNavSettings);
+  placeNavSettings();
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("menu-open")) closeMenu();
   });
@@ -215,7 +236,7 @@
   /* ---------------- Hero ink ----------------
      A dark, still background. Moving the cursor (or a finger) drops ink
      in the logo colours: it blooms, curls like ink in water, and fades
-     within about a second. Nothing runs while nobody is moving. */
+     over a few seconds. Nothing runs while nobody is moving. */
   function heroInk() {
     let canvas = $("#hero-canvas");
     const hero = $(".hero");
@@ -319,7 +340,7 @@
         r: (big ? 26 : 12) + Math.random() * (big ? 24 : 12),
         grow: 2.4 + Math.random() * 2,
         life: 0,
-        dur: 0.7 + Math.random() * 0.4,                          // seconds: short, so it feels crisp
+        dur: 2.2 + Math.random() * 0.8,                          // seconds: a gentle lingering trail
         a: 0.18 + Math.random() * 0.14,
         rot: Math.random() * Math.PI * 2,
         spin: (Math.random() - 0.5) * 1.2,
@@ -333,7 +354,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1;
-      ctx.fillStyle = `rgba(${BG},${Math.min(0.22, 6 * dt)})`;
+      ctx.fillStyle = `rgba(${BG},${Math.min(0.12, 2.5 * dt)})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.setTransform(RES, 0, 0, RES, 0, 0);
@@ -426,6 +447,66 @@
   heroInk();
 
 
+  /* About: type once on entry, preserving a complete accessible copy. */
+  let typingTimer;
+  let aboutVisible = false;
+  function resetTyping() {
+    const copy = $(".about-copy");
+    clearTimeout(typingTimer);
+    const old = $(".typing-copy");
+    if (old) old.remove();
+    copy.classList.remove("typing-source");
+    if (!aboutVisible || reduce) return;
+    const text = copy.textContent;
+    const visual = document.createElement("p");
+    visual.className = "about-copy typing-copy";
+    visual.setAttribute("aria-hidden", "true");
+    copy.classList.add("typing-source");
+    copy.after(visual);
+    let i = 0;
+    function type() {
+      visual.textContent = text.slice(0, i += 3);
+      if (i < text.length) typingTimer = setTimeout(type, 24);
+      else visual.classList.add("typed");
+    }
+    type();
+  }
+  const aboutObserver = new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) {
+      aboutVisible = true;
+      resetTyping();
+      aboutObserver.disconnect();
+    }
+  }, { threshold: 0.2 });
+  aboutObserver.observe($(".about-terminal"));
+
+  const contactDialog = $("#contact-dialog");
+  function openContact() {
+    closeMenu();
+    if (contactDialog.open) return;
+    contactDialog.showModal();
+    // A modal sits on its own top layer, so the custom cursor has to move inside it to stay visible
+    contactDialog.append(...$$("#cursor, #cursor-dot"));
+    if (lenis) lenis.stop();
+    body.classList.add("contact-modal-open");
+    $("#f-name").focus();
+  }
+  window.RafaqOpenContact = openContact;
+  $$("[data-contact-open], a[href='#contact']").forEach((el) => el.addEventListener("click", (e) => {
+    e.preventDefault();
+    openContact();
+  }));
+  $(".dialog-close").addEventListener("click", () => contactDialog.close());
+  contactDialog.addEventListener("click", (e) => { if (e.target === contactDialog) {
+    const r = contactDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) contactDialog.close();
+  } });
+  contactDialog.addEventListener("close", () => {
+    body.prepend(...$$("#cursor, #cursor-dot"));
+    body.classList.remove("contact-modal-open");
+    if (lenis) lenis.start();
+  });
+
   /* ---------------- "I want something like this" -> contact ---------------- */
   $$(".project-like").forEach((card) => {
     card.addEventListener("click", (e) => {
@@ -433,7 +514,7 @@
       const name = card.dataset.project || "";
       const msg = $("#f-msg");
       if (msg && !msg.value.trim()) msg.value = t("work.interest").replace("{name}", name);
-      goTo($("#contact"), "#contact");
+      openContact();
     });
   });
 
@@ -509,7 +590,7 @@
           .replace("{timeline}", answers.timeline ? answers.timeline.label : "—")
           .replace("{budget}", answers.budget ? answers.budget.label : "—");
       }
-      goTo($("#contact"), "#contact");
+      openContact();
     });
 
     showStep(0);
@@ -517,15 +598,23 @@
   })();
 
   /* ---------------- Contact form ---------------- */
-  // Where enquiries go. Until there's a server, the form hands the visitor's message to
-  // their email app (or WhatsApp) with everything already filled in.
-  // email: the business inbox · whatsapp: international number, digits only (e.g. 9627XXXXXXXX)
-  const CONTACT = { email: "", whatsapp: "" };
+  // Messages go straight to the company inbox through FormSubmit (no server needed).
+  // The very first message triggers a one-time "Activate" email to this address.
+  const CONTACT = { email: "rafaqtec@gmail.com" };
+  const FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT.email}`;
 
   const form = $("#contact-form");
   const note = $("#form-note");
-  form.addEventListener("submit", (e) => {
+  const sendBtn = form.querySelector('button[type="submit"]');
+  const sendLabel = sendBtn.querySelector("span");
+  function showNote(text, isErr) {
+    note.textContent = text;
+    note.classList.toggle("err", !!isErr);
+    if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
+  }
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (sendBtn.disabled) return;
     let firstBad = null;
     ["f-name", "f-email", "f-msg"].forEach((id) => {
       const input = $("#" + id);
@@ -534,31 +623,40 @@
       input.setAttribute("aria-invalid", String(!valid));
       if (!valid && !firstBad) firstBad = input;
     });
-    note.classList.toggle("err", !!firstBad);
-    if (firstBad) { note.textContent = t("ct.err"); firstBad.focus(); return; }
+    if (firstBad) { showNote(t("ct.err"), true); firstBad.focus(); return; }
 
     const name = $("#f-name").value.trim();
+    const email = $("#f-email").value.trim();
+    const message = $("#f-msg").value.trim();
     const services = $$('#contact-form input[name="svc"]:checked').map((c) => c.nextElementSibling.textContent.trim());
-    const body = [
-      `${t("ct.name")}: ${name}`,
-      `${t("ct.email")}: ${$("#f-email").value.trim()}`,
-      services.length ? `${t("ct.need")}: ${services.join(", ")}` : "",
-      "",
-      $("#f-msg").value.trim(),
-    ].filter((line, i) => line || i === 3).join("\n");
+    const subject = t("ct.subject").replace("{name}", name);
 
-    if (CONTACT.email) {
-      const subject = t("ct.subject").replace("{name}", name);
-      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      note.textContent = t("ct.mail");
-    } else if (CONTACT.whatsapp) {
-      window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(body)}`, "_blank", "noopener");
-      note.textContent = t("ct.wa");
-    } else {
-      note.textContent = t("ct.ok");
+    sendBtn.disabled = true;
+    sendBtn.setAttribute("aria-busy", "true");
+    const idle = sendLabel.textContent;
+    sendLabel.textContent = t("ct.sending");
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name, email, services: services.join(", ") || "-", message,
+          _subject: subject, _template: "table", _captcha: "false",
+          _honey: form.querySelector('input[name="_honey"]').value,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
+      showNote(t("ct.ok"));
       form.reset();
+    } catch (err) {
+      // Nothing is lost: the text stays in the form, so the visitor can press Send again.
+      showNote(t("ct.fail"), true);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.removeAttribute("aria-busy");
+      sendLabel.textContent = idle;
     }
-    if (hasGSAP && !reduce) gsap.fromTo(note, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
   });
 
   /* ---------------- Counters (fallback without GSAP) ---------------- */
@@ -579,12 +677,6 @@
     gsap.to(".hero-copy", { yPercent: -18, opacity: 0.2, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
     gsap.to(".hero-visual", { yPercent: 25, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
 
-    // Marquee skews with scroll velocity
-    if (lenis) {
-      const skew = gsap.quickTo(".marquee-track", "skewX", { duration: 0.5, ease: "power3.out" });
-      lenis.on("scroll", (e) => skew(gsap.utils.clamp(-12, 12, e.velocity * -0.6)));
-    }
-
     // Generic reveals
     ScrollTrigger.batch(".reveal", {
       start: "top 88%",
@@ -599,27 +691,6 @@
         trigger: el, start: "top 90%", once: true,
         onEnter: () => gsap.to(obj, { v: +el.dataset.to, duration: 2.2, ease: "power3.out", onUpdate: () => (el.textContent = Math.round(obj.v)) }),
       });
-    });
-
-    // Process: horizontal scroll on desktop, stacked reveal on mobile
-    const mm = gsap.matchMedia();
-    const track = $("#process-track");
-    const fill = $("#process-fill");
-    mm.add("(min-width: 961px)", () => {
-      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-      gsap.to(track, {
-        x: () => -dist(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#process", start: "top top", end: () => "+=" + dist(),
-          pin: true, scrub: 1, invalidateOnRefresh: true,
-          onUpdate: (self) => (fill.style.transform = `scaleX(${self.progress})`),
-        },
-      });
-      gsap.from(".step", { opacity: 0, y: 60, duration: 1, stagger: 0.1, ease: "expo.out", scrollTrigger: { trigger: "#process", start: "top 70%" } });
-    });
-    mm.add("(max-width: 960px)", () => {
-      $$(".step").forEach((s) => gsap.from(s, { opacity: 0, y: 60, duration: 1, ease: "expo.out", scrollTrigger: { trigger: s, start: "top 88%" } }));
     });
 
     // The project screenshot opens up as it enters

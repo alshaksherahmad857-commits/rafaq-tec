@@ -2,7 +2,7 @@
    Rafaq Tec — hero fluid (WebGL)
    A small "stable fluids" simulation: moving the pointer pushes the
    water and drops ink in the logo colours, which swirls, marbles and
-   fades quickly. Returns null when the device can't run it, so the
+   fades gradually. Returns null when the device can't run it, so the
    caller can fall back to the simpler canvas effect.
    ========================================================== */
 window.RafaqFluid = function (canvas, opts) {
@@ -12,7 +12,7 @@ window.RafaqFluid = function (canvas, opts) {
     light: false,          // light theme: ink tints a pale background
     simRes: 192,
     dyeRes: 1024,
-    dyeFade: 3.4,          // higher = shorter trail
+    dyeFade: 1.25,          // higher = shorter trail
     velFade: 2.4,          // water settles quickly, so the plume stays compact
     pressure: 0.8,
     pressureIters: 20,
@@ -24,6 +24,8 @@ window.RafaqFluid = function (canvas, opts) {
     bg: [1 / 255, 7 / 255, 20 / 255],        // site background (#010714)
     pageBg: [1 / 255, 7 / 255, 20 / 255],    // same solid colour: the canvas covers the whole page
     palette: [[84, 239, 228], [9, 221, 236], [1, 108, 240], [1, 95, 179]],
+    // Same brand family for light mode, shifted darker so mint and cyan still show on a pale page
+    lightPalette: [[0, 176, 158], [0, 186, 214], [1, 108, 240], [0, 150, 184]],
   }, opts || {});
   if (o.lite) { o.simRes = 96; o.dyeRes = 512; o.pressureIters = 12; }
 
@@ -149,7 +151,7 @@ window.RafaqFluid = function (canvas, opts) {
         if (light > 0.5) {
           // On a light page ink darkens the water instead of glowing: tint towards the pure hue
           float d = max(c.r, max(c.g, c.b));
-          vec3 hue = c / max(d, 0.0001) * vec3(0.55, 0.72, 0.9);
+          vec3 hue = c / max(d, 0.0001) * 0.8;   // keep the ink's own colour, just deeper so it reads on white
           gl_FragColor = vec4(mix(base, hue, clamp(d * 2.4, 0.0, 0.7)), 1.0);
         } else {
           gl_FragColor = vec4(base + c, 1.0);
@@ -356,7 +358,8 @@ window.RafaqFluid = function (canvas, opts) {
   function nextColor(stepSize = 0.07) {
     hue = (hue + stepSize) % o.palette.length;
     const i = Math.floor(hue), f = hue - i;
-    const a = o.palette[i], b = o.palette[(i + 1) % o.palette.length];
+    const pal = o.light ? o.lightPalette : o.palette;
+    const a = pal[i], b = pal[(i + 1) % pal.length];
     const k = o.bright / 255;
     return [0, 1, 2].map((j) => (a[j] + (b[j] - a[j]) * f) * k);
   }
@@ -385,7 +388,7 @@ window.RafaqFluid = function (canvas, opts) {
 
   // ---------- Loop ----------
   let running = false, visible = true, lastT = 0, lastInput = -1e9;
-  const IDLE = 3.2; // seconds after the last movement before the loop stops
+  const IDLE = 7.5; // seconds after the last movement before the loop stops
   function frame(now) {
     if (!running) return;
     const dt = Math.min(0.033, lastT ? (now - lastT) / 1000 : 0.016);
