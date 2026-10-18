@@ -650,10 +650,8 @@
       showNote(t("ct.ok"));
       form.reset();
     } catch (err) {
-      // If the service can't be reached, don't lose the message: open the visitor's email app instead
-      const body = [`${t("ct.name")}: ${name}`, `${t("ct.email")}: ${email}`, services.length ? `${t("ct.need")}: ${services.join(", ")}` : "", "", message].join("\n");
+      // Nothing is lost: the text stays in the form, so the visitor can press Send again.
       showNote(t("ct.fail"), true);
-      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     } finally {
       sendBtn.disabled = false;
       sendBtn.removeAttribute("aria-busy");
