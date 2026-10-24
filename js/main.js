@@ -56,7 +56,7 @@
       const ar = I18N.ar[n.dataset.i18n];
       n.innerHTML = next === "ar" && ar ? ar : n.dataset.en;
     });
-    document.title = next === "ar" ? "رفاق تك | مواقع وتطبيقات وذكاء اصطناعي وتصميم UI/UX" : "RafaqTech | Websites, Mobile Apps, AI & UI/UX Design";
+    document.title = next === "ar" ? "رفق تك | مواقع وتطبيقات وذكاء اصطناعي وتصميم UI/UX" : "RafaqTech | Websites, Mobile Apps, AI & UI/UX Design";
     try { localStorage.setItem("rafaq-lang", next); } catch (e) {}
     if (animate && hasGSAP && !reduce) {
       gsap.fromTo("main, .nav-links, .footer", { opacity: 0.2 }, { opacity: 1, duration: 0.6, ease: "power2.out" });
@@ -598,10 +598,8 @@
   })();
 
   /* ---------------- Contact form ---------------- */
-  // Messages go straight to the company inbox through FormSubmit (no server needed).
-  // The very first message triggers a one-time "Activate" email to this address.
-  const CONTACT = { email: "rafaqtec@gmail.com" };
-  const FORM_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT.email}`;
+  // Messages go to the Worker (/api/contact), which saves each one first and then sends it to the company inbox.
+  const CONTACT_ENDPOINT = "/api/contact";
 
   const form = $("#contact-form");
   const note = $("#form-note");
@@ -636,24 +634,21 @@
     const idle = sendLabel.textContent;
     sendLabel.textContent = t("ct.sending");
     try {
-      const res = await fetch(FORM_ENDPOINT, {
+      const res = await fetch(CONTACT_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          name, email, services: services.join(", ") || "-", message,
-          _subject: subject, _template: "table", _captcha: "false",
-          _honey: form.querySelector('input[name="_honey"]').value,
+          name, email, services: services.join(", ") || "-", message, subject,
+          website: form.querySelector('input[name="_honey"]').value,
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.status);
+      if (!res.ok || !data.ok) throw new Error(data.error || res.status);
       showNote(t("ct.ok"));
       form.reset();
     } catch (err) {
-      // If the service can't be reached, don't lose the message: open the visitor's email app instead
-      const body = [`${t("ct.name")}: ${name}`, `${t("ct.email")}: ${email}`, services.length ? `${t("ct.need")}: ${services.join(", ")}` : "", "", message].join("\n");
+      // Nothing is lost: the text stays in the form, so the visitor can press Send again.
       showNote(t("ct.fail"), true);
-      location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     } finally {
       sendBtn.disabled = false;
       sendBtn.removeAttribute("aria-busy");

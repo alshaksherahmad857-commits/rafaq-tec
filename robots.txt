@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rafaqtec.com/sitemap.xml
+Sitemap: https://rafaqtech.com/sitemap.xml
